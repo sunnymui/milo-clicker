@@ -19,6 +19,7 @@
   };
   // text content
   var ui_text = {
+    upgrade_indexes: {},
     upgrades: [
       {
         title: 'Lucky Cat - Improve Chances of Critical Click',
@@ -63,6 +64,14 @@
     },
     counter_start: '$0 - Click Milo Plz!'
   };
+
+  // map each ui text upgrade name to its index for use in rendering function later
+  ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
+    // set the class name as key and the index as value
+    indexes_map[current_obj_in_array.class] = i;
+    // return the map in the object literal
+    return indexes_map;
+  }, {});
 
   //=========================//
   //    Utility Functions    //
@@ -187,14 +196,7 @@
         break;
       case 'crit_multiplier':
         // this.crit_multiplier
-        // if (this.upgrades.crit_chance.level <= this.upgrades.crit_chance.max_level) {
-        //   this.crit_chance += this.upgrades.crit_chance.increase;
-        //   this.upgrades.crit_chance.level += 1;
-        //   this.upgrades.crit_chance.cost *=  this.upgrades.crit_chance.cost_multiplier;
-        //   this.upgrades.crit_multiplier.active = true;
-        // } else {
-        //   this.upgrades.crit_chance.active = false;
-        // }
+
         break;
       case 'autoclicker':
         // this.autoclicker
@@ -214,36 +216,19 @@
     Args: type of upgrade to render changes for (string)
     Return: na
     */
-    var upgrade_indexes = {
-      crit_chance: 0,
-      crit_multiplier: 1,
-      autoclicker: 2,
-      autoclicker_delay: 3,
-      click_multiplier: 4
-    };
-    var current_upgrade = '.'+type;
-    var current_upgrade_item = this.upgrades[type];
-    var current_text_item; = ui_text.upgrades[];
+    // the class selector for the current upgrade type
+    var upgrade_class = '.'+type;
+    // the index of the current upgrade in the ui text upgrades array
+    var upgrade_text_index = ui_text.upgrade_indexes[type];
+    // this upgrade in the player upgrades table
+    var this_upgrade_item = this.upgrades[type];
+    // this upgrade in the ui text upgrades array
+    var this_text_item = ui_text.upgrades[upgrade_text_index];
     // the heading element for the current upgrade
-    var current_upgrade_title = document.querySelector(current_upgrade + ' h3');
+    var element_title = document.querySelector(upgrade_class + ' h3');
     // the paragraph elemene tfor the current upgrade
-    var current_upgrade_desc = document.querySelector(current_upgrade + ' p');
-    switch (type) {
-      case 'crit_chance':
+    var element_desc = document.querySelector(upgrade_class + ' p');
 
-        break;
-      case 'crit_multiplier':
-        break;
-      case 'autoclicker':
-        // this.autoclicker
-        break;
-      case 'autoclicker_delay':
-        // this.autoclicker_delay
-        break;
-      case 'click_multiplier':
-        // this.click_amount
-        break;
-    }
     $(current_upgrade).html(
       '<a href="#">'+
         '<h3>'+
