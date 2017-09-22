@@ -31,7 +31,7 @@
         title: 'Jackpot Meow - Increase Critical Click Amount',
         class: 'crit_multiplier',
         description: 'Increase the amount a critical click will multiply a regular click.',
-        unit: 'x $MB on Critical',
+        unit: 'x $ on Critical',
         prefix: '+'
       },{
         title: 'MechaCatZilla - Build Automated Robot Cat Clicker',
@@ -43,13 +43,13 @@
         title: 'Catnip Frenzy - Reduce Robot Clicker Recharging Time',
         class: 'autoclicker_delay',
         description: 'Upgrade your robot so it recharges faster, taking less time in between automatic clicks',
-        unit: 'ms',
+        unit: 'milliseconds',
         prefix: ''
       },{
         title: 'Nine Lives - Upgrade Click Multiplier',
         class: 'click_multiplier',
         description: 'More cats for your buck, increases the amount you get per click.',
-        unit: 'x $MB per Click',
+        unit: 'x $ per Click',
         prefix: '+'
       }
     ],
@@ -64,14 +64,6 @@
     },
     counter_start: '$0 - Click Milo Plz!'
   };
-
-  // map each ui text upgrade name to its index for use in rendering function later
-  ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
-    // set the class name as key and the index as value
-    indexes_map[current_obj_in_array.class] = i;
-    // return the map in the object literal
-    return indexes_map;
-  }, {});
 
   //=========================//
   //    Utility Functions    //
@@ -221,25 +213,24 @@
     // the index of the current upgrade in the ui text upgrades array
     var upgrade_text_index = ui_text.upgrade_indexes[type];
     // this upgrade in the player upgrades table
-    var this_upgrade_item = this.upgrades[type];
+    var this_upgrade = this.upgrades[type];
     // this upgrade in the ui text upgrades array
-    var this_text_item = ui_text.upgrades[upgrade_text_index];
+    var this_text = ui_text.upgrades[upgrade_text_index];
     // the heading element for the current upgrade
     var element_title = document.querySelector(upgrade_class + ' h3');
     // the paragraph elemene tfor the current upgrade
     var element_desc = document.querySelector(upgrade_class + ' p');
 
-    $(current_upgrade).html(
-      '<a href="#">'+
-        '<h3>'+
-          '$' + current_upgrade_item.cost + ' - ' + current_text_item.title + ' - Lvl ' + current_upgrade_item.level +
-        '</h3>'+
-        '<p>'+
-          current_text_item.description +
-          '<br>' +
-          'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit +
-        '</p>'+
-      '</a>'
+    // update the displayed title for the current upgrade
+    element_title.innerHtml(
+      '$' + this_upgrade.cost + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level
+    );
+
+    // update the displayed description for the current upgrade
+    element_desc.innerHtml(
+      this_text.description +
+      '<br>' +
+      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current + this_text.unit
     );
   };
 
@@ -262,6 +253,14 @@
       this.clicks += (this.click_amount * this_upgrade.click_multiplier.current);
     }
   };
+
+  // Map each ui text upgrade name to its index for use in player upgrade rendering function
+  ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
+    // set the class name as key and the index as value
+    indexes_map[current_obj_in_array.class] = i;
+    // return the map in the object literal
+    return indexes_map;
+  }, {});
 
   // instantiate a player object for the game
   var player = new Player();
