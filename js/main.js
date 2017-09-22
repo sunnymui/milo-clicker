@@ -102,7 +102,7 @@
         // if the upgrade is unlocked for the player
         active: true,
         // initial cost, increase by cost multiplier after each level
-        cost: 100,
+        cost: 10,
         // amount to increase cost by after each upgrade level
         cost_multiplier: 1.5,
         // level or number of times upgraded
@@ -188,12 +188,12 @@
           click_counter.textContent = '$'+this.clicks;
           // increment crit chance by the amount set in upgrades settings
           this_upgrade.current += this_upgrade.increase;
-          // round current to 2 decimal place precision
-          this_upgrade.current.toFixed(2);
           // increase the current level of this upgrade
           this_upgrade.level += 1;
           // increase the cost
           this_upgrade.cost *=  this_upgrade.cost_multiplier;
+          // round cost to a nice even number
+          this_upgrade.cost = Math.round(this_upgrade.cost);
           // show upgrade notification in notification bar
           notification_bar.textContent = ui_text.notifications.chance_upgrade;
           // unlock the next upgrade in the list
@@ -251,7 +251,7 @@
     element_desc.innerHTML =
       this_text.description +
       '<br>' +
-      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current + this_text.unit;
+      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current.toFixed(2) + this_text.unit;
   };
 
   Player.prototype.roll_for_click = function() {
@@ -261,8 +261,9 @@
     Args: na
     Return: na
     */
-    // get a random number from 0-100
-    var roll = util.random_num_in_range(0,101);
+    // get a random number from 0.0-100.0 (include one decmial point)
+    var roll = util.random_num_in_range(0,1001)/10;
+    // cache reference to the player upgrades object
     var this_upgrade = this.upgrades;
     // check if the rolled number is low enough to trigger a critical
     if (roll <= this_upgrade.crit_chance.current) {
