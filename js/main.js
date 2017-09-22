@@ -43,7 +43,7 @@
         title: 'Catnip Frenzy - Reduce Robot Clicker Recharging Time',
         class: 'autoclicker_delay',
         description: 'Upgrade your robot so it recharges faster, taking less time in between automatic clicks',
-        unit: 'milliseconds',
+        unit: ' milliseconds',
         prefix: ''
       },{
         title: 'Nine Lives - Upgrade Click Multiplier',
@@ -55,7 +55,7 @@
     ],
     upgrades_title: 'Buy Upgrades',
     notifications: {
-      more_money: 'Not Enough $ MiloBucks',
+      need_more_money: 'Not Enough $ MiloBucks',
       crit: 'CRITICAL CLICK!',
       auto: 'Roboclick Clicktivated',
       chance_upgrade: 'You Got Better Chances Now',
@@ -172,24 +172,37 @@
       case 'crit_chance':
         // set current upgrade to the crit chance property in upgrades
         this_upgrade = this.upgrades.crit_chance;
-        // check if player has enough money to buy upgrade
-        if (this_upgrade.cost > this.clicks) {
-          // show a not enough money message
 
-          break;
-        }
         // only allow upgrades if it hasn't been maxed out yet
-        if (this_upgrade.level <= this_upgrade.max_level) {
+        if (this_upgrade.level <= this_upgrade.max_level || !this.upgrade.active) {
+          // check if player has enough money to buy upgrade
+          if (this_upgrade.cost > this.clicks) {
+            // show a not enough money message
+            notification_bar.textContent = ui_text.notifications.need_more_money;
+            // exit function early, don't render any changes
+            return;
+          }
+          // subtract the cost of clicks from player's current clicks amount
+          this.clicks -= this_upgrade.cost;
+          // show updates clicks amount in counter live dom element
+          click_counter.textContent = '$'+this.clicks;
           // increment crit chance by the amount set in upgrades settings
           this_upgrade.current += this_upgrade.increase;
+          // round current to 2 decimal place precision
+          this_upgrade.current.toFixed(2);
           // increase the current level of this upgrade
           this_upgrade.level += 1;
           // increase the cost
           this_upgrade.cost *=  this_upgrade.cost_multiplier;
+          // show upgrade notification in notification bar
+          notification_bar.textContent = ui_text.notifications.chance_upgrade;
           // unlock the next upgrade in the list
           this.upgrades.crit_multiplier.active = true;
         } else {
+          // set upgrade to inactive
           this_upgrade.active = false;
+          // exit function early without rendering changes
+          return;
         }
         break;
       case 'crit_multiplier':
@@ -231,16 +244,14 @@
     var element_desc = document.querySelector(upgrade_class + ' p');
 
     // update the displayed title for the current upgrade
-    element_title.innerHTML(
-      '$' + this_upgrade.cost + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level
-    );
+    element_title.innerHTML =
+      '$' + this_upgrade.cost + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
 
     // update the displayed description for the current upgrade
-    element_desc.innerHTML(
+    element_desc.innerHTML =
       this_text.description +
       '<br>' +
-      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current + this_text.unit
-    );
+      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current + this_text.unit;
   };
 
   Player.prototype.roll_for_click = function() {
@@ -254,9 +265,11 @@
     var roll = util.random_num_in_range(0,101);
     var this_upgrade = this.upgrades;
     // check if the rolled number is low enough to trigger a critical
-    if (roll <= this.crit_chance) {
+    if (roll <= this_upgrade.crit_chance.current) {
       // multiply the base click by crit multiplier and add to clicks count
       this.clicks += (this.click_amount * this_upgrade.click_multiplier.current) * this_upgrade.crit_multiplier.current;
+      // show critical click notification
+      notification_bar.textContent = ui_text.notifications.crit;
     } else {
       // add regular click amount to clicks count
       this.clicks += (this.click_amount * this_upgrade.click_multiplier.current);
