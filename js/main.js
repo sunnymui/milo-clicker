@@ -55,12 +55,13 @@
     ],
     upgrades_title: 'Buy Upgrades',
     notifications: {
+      more_money: 'Not Enough $ MiloBucks',
       crit: 'CRITICAL CLICK!',
       auto: 'Roboclick Clicktivated',
       chance_upgrade: 'You Got Better Chances Now',
       base_click_upgrade: 'Your Clicks Are Worth More Now',
       autoclicker_upgrade: 'Roboclicker Acquired',
-      instructions: 'Click the cat Milo to get MiloBucks(TM) and keep clicking to buy upgrades!'
+      instructions: 'Click the cat Milo to get $ MiloBucks(TM) and keep clicking to buy upgrades!'
     },
     counter_start: '$0 - Click Milo Plz!'
   };
@@ -171,6 +172,12 @@
       case 'crit_chance':
         // set current upgrade to the crit chance property in upgrades
         this_upgrade = this.upgrades.crit_chance;
+        // check if player has enough money to buy upgrade
+        if (this_upgrade.cost > this.clicks) {
+          // show a not enough money message
+
+          break;
+        }
         // only allow upgrades if it hasn't been maxed out yet
         if (this_upgrade.level <= this_upgrade.max_level) {
           // increment crit chance by the amount set in upgrades settings
@@ -184,7 +191,6 @@
         } else {
           this_upgrade.active = false;
         }
-        // need a rendering function
         break;
       case 'crit_multiplier':
         // this.crit_multiplier
@@ -200,6 +206,9 @@
         // this.click_amount
         break;
     }
+
+    // update live upgrades menu stats in the displayed dom
+    this.render_upgrade(type);
   };
 
   Player.prototype.render_upgrade = function(type) {
@@ -222,12 +231,12 @@
     var element_desc = document.querySelector(upgrade_class + ' p');
 
     // update the displayed title for the current upgrade
-    element_title.innerHtml(
+    element_title.innerHTML(
       '$' + this_upgrade.cost + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level
     );
 
     // update the displayed description for the current upgrade
-    element_desc.innerHtml(
+    element_desc.innerHTML(
       this_text.description +
       '<br>' +
       'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current + this_text.unit
