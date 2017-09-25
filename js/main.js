@@ -55,6 +55,8 @@
     ],
     upgrades_title: 'Buy Upgrades',
     notifications: {
+      maxed_out_upgrade: "Can't upgrade more, max level reached for that upgrade",
+      inactive_upgrade: 'Sorry, unlock upgrade by buying the previous upgrade type first',
       need_more_money: 'Not Enough $ MiloBucks',
       crit: 'CRITICAL CLICK!',
       auto: 'Roboclick Clicktivated',
@@ -137,13 +139,13 @@
       // autoclicker delay
       autoclicker_delay: {
         // the ms delay between autoclicks
-        current: 5000,
+        current: 2200,
         active: false,
         cost: 150,
         cost_multiplier: 2,
         level: 0,
-        max_level: 100,
-        increase: -100
+        max_level: 40,
+        increase: -50
       },
       // base click amount multiplier
       click_multiplier: {
@@ -182,19 +184,20 @@
             // exit function early, don't render any changes
             return;
           }
-          // subtract the cost of clicks from player's current clicks amount
-          this.clicks -= this_upgrade.cost;
-          // show updates clicks amount in counter live dom element
-          click_counter.textContent = '$'+this.clicks;
-          // increment crit chance by the amount set in upgrades settings
-          this_upgrade.current += this_upgrade.increase;
-          // increase the current level of this upgrade
-          this_upgrade.level += 1;
-          // increase the cost
-          this_upgrade.cost *=  this_upgrade.cost_multiplier;
-          // round cost to a nice even number
-          this_upgrade.cost = Math.round(this_upgrade.cost);
-          // show upgrade notification in notification bar
+          this.update_upgrade_stats(this_upgrade);
+          // // subtract the cost of clicks from player's current clicks amount
+          // this.clicks -= this_upgrade.cost;
+          // // show updated clicks amount in counter live dom element
+          // click_counter.textContent = '$'+this.clicks;
+          // // increment crit chance by the amount set in upgrades settings
+          // this_upgrade.current += this_upgrade.increase;
+          // // increase the current level of this upgrade
+          // this_upgrade.level += 1;
+          // // increase the cost
+          // this_upgrade.cost *=  this_upgrade.cost_multiplier;
+          // // round cost to a nice even number
+          // this_upgrade.cost = Math.round(this_upgrade.cost);
+          // // show upgrade notification in notification bar
           notification_bar.textContent = ui_text.notifications.chance_upgrade;
           // unlock the next upgrade in the list
           this.upgrades.crit_multiplier.active = true;
@@ -222,6 +225,62 @@
 
     // update live upgrades menu stats in the displayed dom
     this.render_upgrade(type);
+  };
+
+  Player.prototype.check_if_able_to_upgrade = function(upgrade_obj) {
+    /*
+    Check the passed in upgrade to see if it passes all conditions for being able to be upgraded:
+    - player has enough MiloBucks
+    - upgrade is not max level
+    - upgrade is active
+    Args: upgrade_obj - reference to which upgrade object to check in the upgrades table (obj)
+    return: boolean - if all condition checks were passed and upgrade is allowed
+    */
+    // boolean var to return that will be set to false if any condition fails
+    var able_to_upgrade = true;
+
+    // first make sure upgrade is unlocked and accessible
+    if (!upgrade_obj.active) {
+      // can't upgrade so set to false
+      able_to_upgrade = false;
+      // show upgrade not active message
+      notification_bar.textContent = ui_text.notifications.inactive_upgrade;
+
+    // only allow upgrades if it hasn't been maxed out yet
+  } else if (upgrade_obj.level <= this_upgrade.max_level) {
+      able_to_upgrade = false;
+      // show max level reached message
+      notification_bar.textContent = ui_text.notifications.maxed_out_upgrade;
+
+    // check if player has enough money to buy upgrade
+  } else if (upgrade_obj.cost > this.clicks) {
+      able_to_upgrade = false;
+      // show a not enough money message
+      notification_bar.textContent = ui_text.notifications.need_more_money;
+    }
+    return able_to_upgrade;
+  };
+
+  Player.prototype.update_upgrade_stats = function(upgrade_obj) {
+    /*
+    Updates a passed in upgrade type's stats using the increases and
+    other setting information specified in the upgrades object.
+    Args: upgrade_obj - reference to which upgrade object to check in the upgrades table (obj)
+    return: na
+    */
+    // subtract the cost of clicks from player's current clicks amount
+    this.clicks -= upgrade_obj.cost;
+    // show updated clicks amount in counter live dom element
+    click_counter.textContent = '$'+this.clicks;
+    // increment crit chance by the amount set in upgrades settings
+    upgrade_obj.current += upgrade_obj.increase;
+    // increase the current level of this upgrade
+    upgrade_obj.level += 1;
+    // increase the cost
+    upgrade_obj.cost *=  upgrade_obj.cost_multiplier;
+    // round cost to a nice even number
+    upgrade_obj.cost = Math.round(upgrade_obj.cost);
+
   };
 
   Player.prototype.render_upgrade = function(type) {
