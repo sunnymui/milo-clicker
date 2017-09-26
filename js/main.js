@@ -149,7 +149,7 @@
         current: 2010,
         active: false,
         cost: 2,
-        cost_multiplier: 2,
+        cost_multiplier: 2.1,
         level: 0,
         max_level: 20,
         increase: -100
@@ -166,6 +166,18 @@
         increase: 1
       }
     };
+  };
+
+  Player.prototype.render_clicks = function() {
+    /*
+    Renders the clicks amt to the click counter
+    Args: na
+    Return: na
+    */
+    // player clicks amount w/ 2 decimals, format with commas in usd currency format
+    var clicks = this.clicks.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
+    // display formatted clicks in click counter element
+    click_counter.textContent = clicks;
   };
 
   Player.prototype.upgrade = function(type) {
@@ -291,8 +303,8 @@
     */
     // subtract the cost of clicks from player's current clicks amount
     this.clicks -= upgrade_obj.cost;
-    // show updated clicks amount (rounded to 2 decimals) in live counter dom element
-    click_counter.textContent = '$'+this.clicks.toFixed(2);
+    // show updated clicks amount in live counter dom element
+    this.render_clicks();
     // increment current effect of upgrade by the amount set in upgrades settings
     upgrade_obj.current += upgrade_obj.increase;
     // increase the current level of this upgrade
@@ -330,7 +342,7 @@
     // increment clicks by amount of autoclickers multiplied by current base click multiplier
     this.clicks += (this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current);
     // display player clicks amount in click counter
-    click_counter.textContent = '$' + player.clicks.toFixed(2);
+    this.render_clicks();
   };
 
   Player.prototype.unlock_next_upgrade = function(current_upgrade) {
@@ -537,8 +549,8 @@
   milo.addEventListener('click', function(e) {
     // roll for chance of a critical click
     player.roll_for_click();
-    // display player clicks amount in click counter, rounded to 2 decminal pts
-    click_counter.textContent = '$' + player.clicks.toFixed(2);
+    // display player clicks amount in click counter
+    player.render_clicks();
   });
 
 }());
