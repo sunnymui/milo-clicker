@@ -150,6 +150,32 @@ main {
   min-height: 100vh;
 }
 
+// Custom Scroll Bars
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-image: -webkit-gradient(linear,
+									   left bottom,
+									   left top,
+									   color-stop(0.44, rgb(85, 107, 152)),
+									   color-stop(0.72, rgb(49, 84, 126)),
+									   color-stop(0.86, rgb(15, 31, 79)));
+}
+
 // Clickable Layer
 
 .clickable {
@@ -218,7 +244,7 @@ main {
   background: $black;
   color: #fff;
   // so it doesn't take up the whole screen
-  max-height: 30vh;
+  max-height: 33vh;
   // but user can still scrol through to view all the options
   overflow: scroll;
   list-style: none;
@@ -239,6 +265,10 @@ main {
 
   p {
     margin: 0.5em 0.5em 1.5em;
+  }
+
+  li {
+    animation: fade-from-bottom-1 1s 1;
   }
 
   li.inactive {

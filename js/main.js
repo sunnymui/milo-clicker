@@ -137,8 +137,8 @@
         // the number of autoclickers running
         current: 0,
         active: false,
-        cost: 1,
-        cost_multiplier: 1.5,
+        cost: 5,
+        cost_multiplier: 1.8,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -148,7 +148,7 @@
         // the ms delay between autoclicks
         current: 2010,
         active: false,
-        cost: 2,
+        cost: 5,
         cost_multiplier: 2.1,
         level: 0,
         max_level: 20,
@@ -159,8 +159,8 @@
         // base click amount to increment per click
         current: 1,
         active: false,
-        cost: 1,
-        cost_multiplier: 1.6,
+        cost: 50,
+        cost_multiplier: 1.7,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -352,6 +352,12 @@
     Args: current_upgrade (string) - class name of the current upgrade
     Return: na
     */
+    // check if we even need to unlock the next function first
+    if (this.upgrades[current_upgrade].level > 1) {
+      // exit early
+      return;
+    }
+
     var next_upgrade;
     // get the index of the next upgrade to be unlocked in ui text upgrades
     var next_upgrade_index = ui_text.upgrade_indexes[current_upgrade]+1;
