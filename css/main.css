@@ -111,14 +111,27 @@ main {
   animation: shake 60s infinite cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
 
 .counter {
+  position: relative;
   font-size: 5em;
   color: #fff;
-  text-shadow: 2px 2px 3px #000; }
+  text-shadow: 0 0 10px #000; }
 
 .counter::before {
+  margin: auto;
+  padding: 0.3em 0;
+  position: absolute;
+  left: -3em;
+  top: -1.3em;
+  transform: rotate(-16deg);
+  -webkit-backface-visibility: hidden;
   font-size: 0.2em;
   display: block;
-  content: "MiloBucks:"; }
+  font-weight: 100;
+  width: 6em;
+  background: #000;
+  opacity: 0.6;
+  border: 1px solid #fff;
+  content: "MiloBucks"; }
 
 .notifications {
   margin: 0;
@@ -127,7 +140,10 @@ main {
   background: rgba(0, 0, 0, 0.65);
   border-bottom: 1px solid #fff;
   color: #fff;
-  font-weight: 100; }
+  font-weight: 100;
+  animation: fade-from-bottom-1 0.3s 1; }
+  .notifications.animate {
+    animation: fade-from-bottom-2 0.3s 1; }
 
 .upgrades {
   margin: 0;
@@ -149,6 +165,8 @@ main {
     text-decoration: underline; }
   .upgrades p {
     margin: 0.5em 0.5em 1.5em; }
+  .upgrades li.inactive {
+    display: none; }
   .upgrades li:hover {
     opacity: 0.7; }
 
@@ -161,6 +179,22 @@ main {
     transform: translate3d(-3em, -2em, 0) rotate(-12deg); }
   40%, 60% {
     transform: translate3d(4em, -6em, 0) rotate(-17deg); } }
+
+@keyframes fade-from-bottom-1 {
+  0% {
+    opacity: 0;
+    transform: translateY(30%) scale(0.8); }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1); } }
+
+@keyframes fade-from-bottom-2 {
+  0% {
+    opacity: 0;
+    transform: translateY(30%) scale(0.8); }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1); } }
 
 /* ==========================================================================
    Helper classes

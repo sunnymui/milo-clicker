@@ -19,7 +19,10 @@
   };
   // text content
   var ui_text = {
-    upgrade_indexes: {},
+    upgrade_indexes: {
+      // obj that will contain the index number of each upgrade by name in the
+      // ui text upgrades array ie {crit_chance: 0, something_else: 1,...}
+    },
     upgrades: [
       {
         title: 'Lucky Cat - Improve Chances of Critical Click',
@@ -55,16 +58,16 @@
     ],
     upgrades_title: 'Buy Upgrades',
     notifications: {
-      maxed_out_upgrade: "Can't upgrade more, max level reached for that upgrade",
-      inactive_upgrade: 'Sorry, unlock upgrade by buying the previous upgrade type first',
-      need_more_money: 'Not Enough $ MiloBucks',
+      maxed_out_upgrade: "Can't upgrade, max level reached for that upgrade",
+      inactive_upgrade: 'Sorry, you must unlock upgrade by buying  previous upgrade type first',
+      need_more_money: 'Not Enough $ MiloBucks (^=˃ᆺ˂)',
       crit: 'CRITICAL CLICK!',
       auto: 'ROBOCLICK Meowactivated',
-      chance_upgrade: 'You Got Better Chances Meow',
-      crit_multiplier_upgrade: 'You Meow Get More MiloBucks on a Critical Click',
-      click_multiplier_upgrade: 'Your Clicks Are Worth More Meow',
-      autoclicker_upgrade: 'Robot Cat Clicker Acquired',
-      autoclicker_delay_upgrade: 'Robot Cat Clicker Recharges Faster Meow',
+      chance_upgrade: 'You Get Better Critical Chances Meow!',
+      crit_multiplier_upgrade: 'You Meow Get More MiloBucks on a Critical Click!',
+      click_multiplier_upgrade: 'Your Clicks Are Worth More Meow!',
+      autoclicker_upgrade: 'Robot Cat Clicker Acquired!',
+      autoclicker_delay_upgrade: 'Robot Cat Clicker Recharges Faster Meow!',
       instructions: 'Click Milo the cat, get $ MiloBucks(TM), & buy upgrades to get more $!'
     },
     counter_start: '$0 - Click Milo Plz!'
@@ -145,8 +148,8 @@
         // the ms delay between autoclicks
         current: 2010,
         active: false,
-        cost: 1,
-        cost_multiplier: 1.5,
+        cost: 2,
+        cost_multiplier: 2,
         level: 0,
         max_level: 20,
         increase: -100
@@ -157,10 +160,10 @@
         current: 1,
         active: false,
         cost: 1,
-        cost_multiplier: 1.5,
+        cost_multiplier: 1.6,
         level: 0,
         max_level: 1000,
-        increase: 0.2
+        increase: 1
       }
     };
   };
@@ -183,10 +186,10 @@
         if (this.check_if_able_to_upgrade(this_upgrade)) {
           // increment the relevant upgrade stats and settings
           this.update_upgrade_stats(this_upgrade);
+          // unlock the next upgrade in the menu
+          this.unlock_next_upgrade(type);
           // show the crit chance notification message
           notification_bar.textContent = ui_text.notifications.chance_upgrade;
-          // unlock the next upgrade in the list
-          this.upgrades.crit_multiplier.active = true;
         }
         break;
       case 'crit_multiplier':
@@ -196,10 +199,10 @@
         if (this.check_if_able_to_upgrade(this_upgrade)) {
           // increment the relevant upgrade stats and settings
           this.update_upgrade_stats(this_upgrade);
+          // unlock the next upgrade in the menu
+          this.unlock_next_upgrade(type);
           // show the crit chance notification message
           notification_bar.textContent = ui_text.notifications.crit_multiplier_upgrade;
-          // unlock the next upgrade in the list
-          this.upgrades.autoclicker.active = true;
         }
         break;
       case 'autoclicker':
@@ -209,10 +212,10 @@
         if (this.check_if_able_to_upgrade(this_upgrade)) {
           // increment the relevant upgrade stats and settings
           this.update_upgrade_stats(this_upgrade);
+          // unlock the next upgrade in the menu
+          this.unlock_next_upgrade(type);
           // show the crit chance notification message
           notification_bar.textContent = ui_text.notifications.autoclicker_upgrade;
-          // unlock the next upgrade in the list
-          this.upgrades.autoclicker_delay.active = true;
         }
         break;
       case 'autoclicker_delay':
@@ -222,10 +225,10 @@
         if (this.check_if_able_to_upgrade(this_upgrade)) {
           // increment the relevant upgrade stats and settings
           this.update_upgrade_stats(this_upgrade);
+          // unlock the next upgrade in the menu
+          this.unlock_next_upgrade(type);
           // show the crit chance notification message
           notification_bar.textContent = ui_text.notifications.autoclicker_delay_upgrade;
-          // unlock the next upgrade in the list
-          this.upgrades.click_multiplier.active = true;
         }
         break;
       case 'click_multiplier':
@@ -330,6 +333,46 @@
     click_counter.textContent = '$' + player.clicks.toFixed(2);
   };
 
+  Player.prototype.unlock_next_upgrade = function(current_upgrade) {
+    /*
+    Takes in the current upgrade and unlocks the next upgrade in the
+    upgrades table, makes it visible in the dom too.
+    Args: current_upgrade (string) - class name of the current upgrade
+    Return: na
+    */
+    var next_upgrade;
+    // get the index of the next upgrade to be unlocked in ui text upgrades
+    var next_upgrade_index = ui_text.upgrade_indexes[current_upgrade]+1;
+    // cache reference to ui text upgrades array
+    var upgrades_array = ui_text.upgrades;
+    // class to be removed from unlocked elements
+    var inactive_class = 'inactive';
+
+    // check that we're not already at the end of ui text upgrades array
+    if (next_upgrade_index !== upgrades_array.length) {
+      // get correct identifier/class for the next upgrade
+      next_upgrade = upgrades_array[next_upgrade_index].class;
+      // unlock the next upgrade in the list
+      this.upgrades[next_upgrade].active = true;
+      // remove inactive class of next upgrade
+      document.getElementsByClassName(next_upgrade)[0].classList.remove(inactive_class);
+    }
+  };
+
+  Player.prototype.show_notification = function(notification_text) {
+    /*
+    Shows the notification in the notification bar with proper css
+    animations.
+    Args: notification_text (string) - the string to set as the notification text
+    Return: na
+    */
+    // show the crit chance notification message
+    notification_bar.textContent = notification_text;
+    // toggle animate class to allow for restarting css animation
+    // in conjunction with the 2 css animations on notification bar
+    notification_bar.classList.toggle('animate');
+  };
+
   Player.prototype.render_upgrade = function(type) {
     /*
     Renders the changes in an upgrade's stats/settings visually in the actual visible dom upgrades menu element.
@@ -383,7 +426,7 @@
       // multiply the base click by crit multiplier and add to clicks count
       this.clicks += (this.click_amount * this_upgrade.click_multiplier.current) * this_upgrade.crit_multiplier.current;
       // show critical click notification
-      notification_bar.textContent = ui_text.notifications.crit;
+      this.show_notification(ui_text.notifications.crit);
     } else {
       // add regular click amount to clicks count
       this.clicks += (this.click_amount * this_upgrade.click_multiplier.current);
@@ -414,15 +457,19 @@
   // init vars to use in the loop as references for current items
   var current_text_item;
   var current_upgrade_item;
+  var inactive_class = '';
   // append each of the upgrade options to the ui list container element
   for (i=0; i < ui_text.upgrades.length; i += 1) {
     // the current item in the ui text object
     current_text_item = ui_text.upgrades[i];
     // the current upgrade in the player.upgrades object
     current_upgrade_item = player.upgrades[current_text_item.class];
+    if (!current_upgrade_item.active) {
+      inactive_class = ' inactive';
+    }
     // append li html to the upgrades ul
     $(upgrades).append(
-      '<li class="'+ current_text_item.class +'">'+
+      '<li class="'+ current_text_item.class + inactive_class +'">'+
         '<a href="#">'+
           '<h3>'+
             '$' + current_upgrade_item.cost + ' - ' + current_text_item.title + ' - Lvl ' + current_upgrade_item.level +
@@ -430,7 +477,7 @@
           '<p>'+
             current_text_item.description +
             '<br>' +
-            'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit +
+            'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit + ' | Max Lvl: ' + current_upgrade_item.max_level +
           '</p>'+
         '</a>'+
       '</li>'

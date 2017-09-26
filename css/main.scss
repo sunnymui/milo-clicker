@@ -102,7 +102,7 @@ $white: rgba(#ffffff, 0.65);
 
 // other vars
 
-$counter-label: 'MiloBucks:';
+$counter-label: 'MiloBucks';
 
 // mixins
 
@@ -168,16 +168,31 @@ main {
 // UI Elements
 
 .counter {
+  // so the pseudo element is positioned within the counter
+  position: relative;
   font-size: 5em;
   color: #fff;
-  text-shadow: 2px 2px 3px #000;
+  text-shadow: 0 0 10px #000;
 }
 
 // create a label for the counter
 .counter::before {
+  @include margin-padding(auto, 0.3em 0);
+  // position it to the top left corner
+  position: absolute;
+  left: -3em;
+  top: -1.3em;
+  transform: rotate(-16deg);
+  // hack to fix the antialiasing
+  -webkit-backface-visibility: hidden;
   // effectively 1em since em sets size relative to parent element
   font-size: 0.2em;
   display: block;
+  font-weight: 100;
+  width: 6em;
+  background: #000;
+  opacity: 0.6;
+  border: 1px solid #fff;
   content: $counter-label;
 }
 
@@ -188,6 +203,13 @@ main {
   border-bottom: 1px solid #fff;
   color: #fff;
   font-weight: 100;
+  // same animation with different names used to restart css animation
+  // when toggling animate class off and on
+  animation: fade-from-bottom-1 0.3s 1;
+
+  &.animate {
+    animation: fade-from-bottom-2 0.3s 1;
+  }
 }
 
 .upgrades {
@@ -219,6 +241,10 @@ main {
     margin: 0.5em 0.5em 1.5em;
   }
 
+  li.inactive {
+    display: none;
+  }
+
   li:hover {
     opacity: 0.7;
   }
@@ -244,7 +270,18 @@ main {
     transform: translate3d(4em, -6em, 0) rotate(-17deg);
   }
 }
-
+@for $i from 1 through 2 {
+  @keyframes fade-from-bottom-#{$i} {
+    0% {
+      opacity: 0;
+      transform: translateY(30%) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
 
 /* ==========================================================================
    Helper classes
