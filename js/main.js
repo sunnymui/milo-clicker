@@ -59,10 +59,10 @@
       inactive_upgrade: 'Sorry, unlock upgrade by buying the previous upgrade type first',
       need_more_money: 'Not Enough $ MiloBucks',
       crit: 'CRITICAL CLICK!',
-      auto: 'Roboclick Clicktivated',
+      auto: 'ROBOCLICK Meowactivated',
       chance_upgrade: 'You Got Better Chances Meow',
       crit_multiplier_upgrade: 'You Meow Get More MiloBucks on a Critical Click',
-      base_click_upgrade: 'Your Clicks Are Worth More Meow',
+      click_multiplier_upgrade: 'Your Clicks Are Worth More Meow',
       autoclicker_upgrade: 'Robot Cat Clicker Acquired',
       autoclicker_delay_upgrade: 'Robot Cat Clicker Recharges Faster Meow',
       instructions: 'Click Milo the cat, get $ MiloBucks(TM), & buy upgrades to get more $!'
@@ -108,58 +108,58 @@
         // if the upgrade is unlocked for the player
         active: true,
         // initial cost, increase by cost multiplier after each level
-        cost: 10,
+        cost: 1,
         // amount to increase cost by after each upgrade level
-        cost_multiplier: 1.5,
+        cost_multiplier: 1.4,
         // level or number of times upgraded
         level: 0,
         // maximum number of upgrades
-        max_level: 100,
+        max_level: 50,
         // amount to increase the current amount by
-        increase: 0.4
+        increase: 1
       },
       // amount to multiply base click by for a critical
       crit_multiplier: {
         // the amt to multiply a critical click by
         current: 3,
         active: false,
-        cost: 20,
-        cost_multiplier: 2,
+        cost: 1,
+        cost_multiplier: 1.5,
         level: 0,
-        max_level: 100,
-        increase: 0.2
+        max_level: 1000,
+        increase: 1
       },
       // autoclicker
       autoclicker: {
         // the number of autoclickers running
         current: 0,
         active: false,
-        cost: 15,
+        cost: 1,
         cost_multiplier: 1.5,
         level: 0,
-        max_level: 100,
+        max_level: 1000,
         increase: 1
       },
       // autoclicker delay
       autoclicker_delay: {
         // the ms delay between autoclicks
-        current: 2200,
+        current: 2010,
         active: false,
-        cost: 150,
-        cost_multiplier: 2,
+        cost: 1,
+        cost_multiplier: 1.5,
         level: 0,
-        max_level: 40,
-        increase: -50
+        max_level: 20,
+        increase: -100
       },
       // base click amount multiplier
       click_multiplier: {
         // base click amount to increment per click
         current: 1,
         active: false,
-        cost: 300,
-        cost_multiplier: 2,
+        cost: 1,
+        cost_multiplier: 1.5,
         level: 0,
-        max_level: 100,
+        max_level: 1000,
         increase: 0.2
       }
     };
@@ -167,7 +167,8 @@
 
   Player.prototype.upgrade = function(type) {
   /*
-  Activates an upgrade, levels the stats, and increments it in the player instance.
+  Activates an upgrade, levels the stats, and increments it in the player instance, displays notification according to
+  the type of upgrade. Unlocks the next upgrade in the list.
   Args: type of upgrade (string)
   Return: na
   */
@@ -215,10 +216,28 @@
         }
         break;
       case 'autoclicker_delay':
-        // this.autoclicker_delay
+        // set current upgrade to the autoclicker property in upgrades
+        this_upgrade = this.upgrades.autoclicker_delay;
+        // check conditions, if player is able to upgrade
+        if (this.check_if_able_to_upgrade(this_upgrade)) {
+          // increment the relevant upgrade stats and settings
+          this.update_upgrade_stats(this_upgrade);
+          // show the crit chance notification message
+          notification_bar.textContent = ui_text.notifications.autoclicker_delay_upgrade;
+          // unlock the next upgrade in the list
+          this.upgrades.click_multiplier.active = true;
+        }
         break;
       case 'click_multiplier':
-        // this.click_amount
+        // set current upgrade to the autoclicker property in upgrades
+        this_upgrade = this.upgrades.click_multiplier;
+        // check conditions, if player is able to upgrade
+        if (this.check_if_able_to_upgrade(this_upgrade)) {
+          // increment the relevant upgrade stats and settings
+          this.update_upgrade_stats(this_upgrade);
+          // show the crit chance notification message
+          notification_bar.textContent = ui_text.notifications.click_multiplier_upgrade;
+        }
         break;
     }
 
@@ -278,13 +297,21 @@
     // increase the cost
     upgrade_obj.cost *=  upgrade_obj.cost_multiplier;
     // round cost to a nice even number
-    upgrade_obj.cost = Math.round(upgrade_obj.cost);
+    upgrade_obj.cost = upgrade_obj.cost;
 
     // special initiator for the robot cat clicker upgrade_obj
     // only create one setInterval function to run autoclicks at initial purchase
     if (upgrade_obj === this.upgrades.autoclicker && this.upgrades.autoclicker.current === 1) {
       // run autoclick every x seconds as set in autoclicker delay using setInterval
       // bind autoclick so this = player in the callback
+      this.autoclicker = setInterval(this.autoclick.bind(this), this.upgrades.autoclicker_delay.current);
+    }
+
+    // reinitiate setInterval w/ updated delay if an autoclicker delay upgrade
+    if (upgrade_obj === this.upgrades.autoclicker_delay) {
+      // cancel currently rerunning setInterval
+      clearTimeout(this.autoclicker);
+      // restart the setInterval autoclicker with updated delay time
       this.autoclicker = setInterval(this.autoclick.bind(this), this.upgrades.autoclicker_delay.current);
     }
 
@@ -322,15 +349,22 @@
     // the paragraph elemene tfor the current upgrade
     var element_desc = document.querySelector(upgrade_class + ' p');
 
-    // update the displayed title for the current upgrade
-    element_title.innerHTML =
-      '$' + this_upgrade.cost + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
+    // render different format if can't be upgraded since at max level
+    if (this_upgrade.level === this_upgrade.max_level) {
+      // update the displayed title for the current upgrade
+      element_title.innerHTML =
+        '<del>' + this_text.title + '</del>' + ' - MAX LVL';
+    } else {
+      // update the displayed title with current level and cost info
+      element_title.innerHTML =
+        '$' + this_upgrade.cost.toFixed(2) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
+    }
 
     // update the displayed description for the current upgrade
     element_desc.innerHTML =
       this_text.description +
       '<br>' +
-      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current.toFixed(2) + this_text.unit;
+      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current.toFixed(2) + this_text.unit + ' | Max Lvl: ' + this_upgrade.max_level;
   };
 
   Player.prototype.roll_for_click = function() {
