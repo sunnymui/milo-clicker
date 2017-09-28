@@ -101,6 +101,8 @@
     this.click_amount = 1;
     // amount the last click incremented clicks by
     this.last_click_increment = 1;
+    // track if critical hit for most recent click
+    this.last_click_crit = false;
     // autoclicker function placeholder
     this.autoclicker = function(){};
 
@@ -140,7 +142,7 @@
         current: 0,
         active: false,
         cost: 5,
-        cost_multiplier: 1.8,
+        cost_multiplier: 1.9,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -177,13 +179,25 @@
     Args: x, y
     Return:
     */
+    // create element to hold the animated click amount display
     var click_animation = document.createElement('div');
-    click_animation.classList.add('clicked');
+    // check if we have hit a critical during the roll
+    if (this.last_click_crit) {
+      // if critical, add critical class also
+      click_animation.classList.add('clicked','critical');
+    } else {
+      // if not, just add the regular clicked class
+      click_animation.classList.add('clicked');
+    }
+    // position the click amt slightly to the left
     click_animation.style.left = x - 20 +'px';
-    click_animation.style.top = y - 30 + 'px';
-    click_animation.textContent = this.last_click_increment;
+    // and above the mouse cursor
+    click_animation.style.top = y - 35 + 'px';
+    // set text to the amount we incremented clicks by
+    click_animation.textContent = '+' + this.last_click_increment;
+    // append the click amount display to the actual dom
     click_layer.appendChild(click_animation);
-    click_animation.classList.add('thisworked');
+    // set a delayed callback to remove the element after the animation
     setTimeout(function(){
       click_layer.removeChild(click_animation);
     }, 700);
@@ -439,7 +453,7 @@
     } else {
       // update the displayed title with current level and cost info
       element_title.innerHTML =
-        '$' + this_upgrade.cost.toFixed(2) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
+        this_upgrade.cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'}) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
     }
 
     // update the displayed description for the current upgrade
@@ -464,17 +478,21 @@
     var click_increment;
     // check if the rolled number is low enough to trigger a critical
     if (roll <= this_upgrade.crit_chance.current) {
-      // calculate click increment
-      click_increment = this.click_amount * this_upgrade.click_multiplier.current * this_upgrade.crit_multiplier.current;
       // multiply the base click by crit multiplier and add to clicks count
+      click_increment = this.click_amount * this_upgrade.click_multiplier.current * this_upgrade.crit_multiplier.current;
+      // increment clicks
       this.clicks += click_increment;
       // show critical click notification
       this.show_notification(ui_text.notifications.crit);
+      // set click crit tracker property to true
+      this.last_click_crit = true;
     } else {
-      // calculate the click increment
+      // regular click amount times base click multiplier
       click_increment = this.click_amount * this_upgrade.click_multiplier.current;
-      // add regular click amount to clicks count
+      // increment clicks count
       this.clicks += click_increment;
+      // no crit was hit so set crit tracker to false
+      this.last_click_crit = false;
     }
     // record click increment for displaying click animation
     this.last_click_increment = click_increment;
@@ -586,7 +604,7 @@
     player.roll_for_click();
     // display player clicks amount in click counter
     player.render_clicks();
-    // render the click increment animation
+    // render the click increment animation at mouse click location
     player.render_click_animation(e.pageX, e.pageY);
   });
 

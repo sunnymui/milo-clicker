@@ -188,12 +188,18 @@ main {
 .clicked {
   position: absolute;
   color: #fff;
+  // so after animation runs it stays hidden
   opacity: 0;
   font-size: 2em;
   font-weight: bold;
   // so clicks fall through into the clickable layer instead
   pointer-events: none;
   animation: fade-out-to-top 0.7s 1;
+
+  &.critical {
+    color: #aa0000;
+    font-size: 3em;
+  }
 }
 
 .cat {

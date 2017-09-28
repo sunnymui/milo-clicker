@@ -127,6 +127,9 @@ main {
   font-weight: bold;
   pointer-events: none;
   animation: fade-out-to-top 0.7s 1; }
+  .clicked.critical {
+    color: #aa0000;
+    font-size: 3em; }
 
 .cat {
   max-width: 20em;
