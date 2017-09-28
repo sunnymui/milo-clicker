@@ -116,7 +116,17 @@ main {
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, #556b98), color-stop(0.72, #31547e), color-stop(0.86, #0f1f4f)); }
 
 .clickable {
-  min-height: 100vh; }
+  min-height: 100vh;
+  position: relative; }
+
+.clicked {
+  position: absolute;
+  color: #fff;
+  opacity: 0;
+  font-size: 2em;
+  font-weight: bold;
+  pointer-events: none;
+  animation: fade-out-to-top 0.7s 1; }
 
 .cat {
   max-width: 20em;
@@ -210,6 +220,17 @@ main {
   100% {
     opacity: 1;
     transform: translateY(0) scale(1); } }
+
+@keyframes fade-out-to-top {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1); }
+  90% {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.8); }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) scale(0); } }
 
 /* ==========================================================================
    Helper classes

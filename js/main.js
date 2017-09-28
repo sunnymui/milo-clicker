@@ -99,7 +99,9 @@
     this.clicks = 0;
     // amount to increment per click
     this.click_amount = 1;
-    // autoclicker function
+    // amount the last click incremented clicks by
+    this.last_click_increment = 1;
+    // autoclicker function placeholder
     this.autoclicker = function(){};
 
     // player clicker upgrades info and settings
@@ -166,6 +168,25 @@
         increase: 1
       }
     };
+  };
+
+  Player.prototype.render_click_animation = function(x, y) {
+    /*
+    Take in click location coordinates and put a click increment
+    animation at that location that disappears eventually.
+    Args: x, y
+    Return:
+    */
+    var click_animation = document.createElement('div');
+    click_animation.classList.add('clicked');
+    click_animation.style.left = x - 20 +'px';
+    click_animation.style.top = y - 30 + 'px';
+    click_animation.textContent = this.last_click_increment;
+    click_layer.appendChild(click_animation);
+    click_animation.classList.add('thisworked');
+    setTimeout(function(){
+      click_layer.removeChild(click_animation);
+    }, 700);
   };
 
   Player.prototype.render_clicks = function() {
@@ -439,16 +460,24 @@
     var roll = util.random_num_in_range(0,1001)/10;
     // cache reference to the player upgrades object
     var this_upgrade = this.upgrades;
+    // amount that clicks will be incremented by
+    var click_increment;
     // check if the rolled number is low enough to trigger a critical
     if (roll <= this_upgrade.crit_chance.current) {
+      // calculate click increment
+      click_increment = this.click_amount * this_upgrade.click_multiplier.current * this_upgrade.crit_multiplier.current;
       // multiply the base click by crit multiplier and add to clicks count
-      this.clicks += (this.click_amount * this_upgrade.click_multiplier.current) * this_upgrade.crit_multiplier.current;
+      this.clicks += click_increment;
       // show critical click notification
       this.show_notification(ui_text.notifications.crit);
     } else {
+      // calculate the click increment
+      click_increment = this.click_amount * this_upgrade.click_multiplier.current;
       // add regular click amount to clicks count
-      this.clicks += (this.click_amount * this_upgrade.click_multiplier.current);
+      this.clicks += click_increment;
     }
+    // record click increment for displaying click animation
+    this.last_click_increment = click_increment;
   };
 
   // Map each ui text upgrade name to its index for use in player upgrade rendering function
@@ -557,6 +586,9 @@
     player.roll_for_click();
     // display player clicks amount in click counter
     player.render_clicks();
+    // render the click increment animation
+    player.render_click_animation(e.pageX, e.pageY);
   });
+
 
 }());
