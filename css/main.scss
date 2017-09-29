@@ -222,6 +222,7 @@ main {
   bottom: 33vh;
   z-index: 0;
   max-width: 8em;
+  animation: size-shift 7s infinite both;
 }
 
 // UI Elements
@@ -341,6 +342,22 @@ main {
     transform: translate3d(4em, -6em, 0) rotate(-17deg);
   }
 }
+
+@keyframes size-shift {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  33% {
+    transform: scale(1.2) rotate(-10deg);
+  }
+
+  66% {
+    transform: scale(1.2) rotate(10deg);
+  }
+
+}
+
 @for $i from 1 through 2 {
   @keyframes fade-from-bottom-#{$i} {
     0% {

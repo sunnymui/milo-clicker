@@ -182,8 +182,8 @@
     /*
     Take in click location coordinates and put a click increment
     animation at that location that disappears eventually.
-    Args: x, y
-    Return:
+    Args: x, y locations to render click animation at (int or string)
+    Return: na
     */
     // create element to hold the animated click amount display
     var click_animation = document.createElement('div');
@@ -392,14 +392,17 @@
     Args: na
     Return: na
     */
-    // increment clicks by amount of autoclickers multiplied by current base click multiplier
-    this.clicks += (this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current);
-    //
-    this.last_click_increment = this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current;
+    // autoclick calc as amount of autoclickers multiplied by current base click multiplier
+    var autoclick_increment = this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current;
+    // increment clicks
+    this.clicks += autoclick_increment;
+    // set last click increment to autoclick increment amt
+    this.last_click_increment = autoclick_increment;
+    // no crits for autoclicks
     this.last_click_crit = false;
     // display player clicks amount in click counter
     this.render_clicks();
-    // render the click increment animation at mouse click location
+    // render the click increment animation at robot location
     this.render_click_animation('50%', '56%');
   };
 
