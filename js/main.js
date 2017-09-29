@@ -6,8 +6,6 @@
   var item;
 
   // get the dom elements to append to
-  // the containing dom element to append ui elements to
-  var ui_layer = document.querySelector('.ui');
   // the clickable image layer that'll generate clicks
   var click_layer = document.querySelector('.clickable');
 
@@ -367,11 +365,15 @@
     if (upgrade_obj === this.upgrades.autoclicker && this.upgrades.autoclicker.current === 1) {
       // run autoclick every x seconds as set in autoclicker delay using setInterval
       // bind autoclick so this = player in the callback
-      this.autoclicker = setInterval(this.autoclick.bind(this), this.upgrades.autoclicker_delay.current);
-
+      this.autoclicker = setInterval(this.autoclick.bind(this),
+      this.upgrades.autoclicker_delay.current);
+      // create the img element for the robot
       var robot_img = document.createElement('img');
+      // add the robot class to the img
       robot_img.classList.add('robot');
+      // assign the src to roomba cat png
       robot_img.src = assets.roomba_cat_src;
+      // append the robot element to the dom
       click_layer.appendChild(robot_img);
     }
 
@@ -523,6 +525,12 @@
     // record click increment for displaying click animation
     this.last_click_increment = click_increment;
   };
+
+  /*
+  ===========================================================
+  BUILD THE GAME
+  ===========================================================
+  */
 
   // Map each ui text upgrade name to its index for use in player upgrade rendering function
   ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
