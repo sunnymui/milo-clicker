@@ -29,52 +29,52 @@
     },
     upgrades: [
       {
-        title: 'Lucky Cat - Improve Chances of Critical Click',
+        title: 'Lucky Cat - Improve Chance of CRITICAL CLICK',
         class: 'crit_chance',
-        description: 'Increases the chance of a critical click, making it more likely.',
-        unit: '% Critical Chance',
+        description: 'Makes your chance of a CRITICAL CLICK more likely, more CRITICAL CLICKS = more bonus $.',
+        unit: '% Chance',
         prefix: '+'
       },{
-        title: 'Jackpot Meow - Increase Critical Click Amount',
+        title: 'Jackpot Meow - Increase CRITICAL CLICK Bonus Amount',
         class: 'crit_multiplier',
-        description: 'Increase the amount a critical click will multiply a regular click.',
+        description: 'Increases the bonus $ amount of a CRITICAL CLICK. Multiplies a CRITICAL CLICK by a higher bonus amount.',
         unit: 'x $ on Critical',
         prefix: '+'
       },{
-        title: 'MechaCatZilla - Build Automated Robot Cat Clicker',
+        title: 'RoboCat - Makes $ Automatically For You',
         class: 'autoclicker',
-        description: 'Ultra-advanced AI breakthroughs, deep learning neural nets, and tree search algorithms allow you to have a robot click the cat automatically for you every few seconds. Those clicks do not trigger criticals though.',
+        description: 'Have RoboCat automatically earn $ for you. Each level increases the amount RoboCat earns. Utilizes ultra-advanced AI breakthroughs, deep learning neural nets, and tree search algorithms. RoboCat does not trigger CRITICAL CLICKS.',
         unit: '',
         prefix: '+'
       },{
-        title: 'Catnip Frenzy - Reduce Robot Clicker Recharging Time',
+        title: 'RoboCatNip Zoomies - Increase RoboCat Speed',
         class: 'autoclicker_delay',
-        description: 'Upgrade your robot so it recharges faster, taking less time in between automatic clicks',
+        description: 'Makes RoboCat faster, taking less time and earning you $ more quickly.',
         unit: ' milliseconds',
         prefix: ''
       },{
         title: 'Nine Lives - Upgrade Click Multiplier',
         class: 'click_multiplier',
-        description: 'More cats for your buck, increases the amount you get per click.',
+        description: 'Increases the amount you get per click. Makes every click earn more $, including CRITICAL CLICKS and RoboCat earnings.',
         unit: 'x $ per Click',
         prefix: '+'
       }
     ],
     upgrades_title: 'Buy Upgrades',
     notifications: {
-      maxed_out_upgrade: "Can't upgrade, max level reached for that upgrade",
+      maxed_out_upgrade: "CAN'T UPGRADE! Max level reached for upgrade!",
       inactive_upgrade: 'Sorry, you must unlock upgrade by buying  previous upgrade type first',
-      need_more_money: 'Not Enough $ MiloBucks (^=˃ᆺ˂)',
-      crit: 'CRITICAL CLICK!',
+      need_more_money: 'MORE $ NEEDED (^=˃ᆺ˂) Keep Clickin!',
+      crit: '< CRITICAL CLICK! >',
       auto: 'ROBOCLICK Meowactivated',
-      chance_upgrade: 'You Get Better Critical Chances Meow!',
+      crit_chance_upgrade: 'You Get Better Critical Chances Meow!',
       crit_multiplier_upgrade: 'You Meow Get More MiloBucks on a Critical Click!',
-      click_multiplier_upgrade: 'Your Clicks Are Worth More Meow!',
-      autoclicker_upgrade: 'Robot Cat Clicker Acquired!',
-      autoclicker_delay_upgrade: 'Robot Cat Clicker Recharges Faster Meow!',
+      click_multiplier_upgrade: 'Each of your Clicks Are Worth More $ Meow!',
+      autoclicker_upgrade: 'RoboCat Upgraded!',
+      autoclicker_delay_upgrade: 'RoboCat Clicks Faster Meow!',
       instructions: 'Click Milo the cat, get $ MiloBucks(TM), & buy upgrades to get more $!'
     },
-    counter_start: '$0 - Click Milo Plz!'
+    counter_start: 'Click Milo, Get $!'
   };
 
   //=========================//
@@ -247,7 +247,7 @@
           // unlock the next upgrade in the menu
           this.unlock_next_upgrade(type);
           // show the crit chance notification message
-          notification_bar.textContent = ui_text.notifications.chance_upgrade;
+          this.show_notification(ui_text.notifications.crit_chance_upgrade);
         }
         break;
       case 'crit_multiplier':
@@ -260,7 +260,7 @@
           // unlock the next upgrade in the menu
           this.unlock_next_upgrade(type);
           // show the crit chance notification message
-          notification_bar.textContent = ui_text.notifications.crit_multiplier_upgrade;
+          this.show_notification(ui_text.notifications.crit_multiplier_upgrade);
         }
         break;
       case 'autoclicker':
@@ -273,7 +273,7 @@
           // unlock the next upgrade in the menu
           this.unlock_next_upgrade(type);
           // show the crit chance notification message
-          notification_bar.textContent = ui_text.notifications.autoclicker_upgrade;
+          this.show_notification(ui_text.notifications.autoclicker_upgrade);
         }
         break;
       case 'autoclicker_delay':
@@ -286,7 +286,7 @@
           // unlock the next upgrade in the menu
           this.unlock_next_upgrade(type);
           // show the crit chance notification message
-          notification_bar.textContent = ui_text.notifications.autoclicker_delay_upgrade;
+          this.show_notification(ui_text.notifications.autoclicker_delay_upgrade);
         }
         break;
       case 'click_multiplier':
@@ -297,7 +297,7 @@
           // increment the relevant upgrade stats and settings
           this.update_upgrade_stats(this_upgrade);
           // show the crit chance notification message
-          notification_bar.textContent = ui_text.notifications.click_multiplier_upgrade;
+          this.show_notification(ui_text.notifications.click_multiplier_upgrade);
         }
         break;
     }
@@ -323,19 +323,19 @@
       // can't upgrade so set to false
       able_to_upgrade = false;
       // show upgrade not active message
-      notification_bar.textContent = ui_text.notifications.inactive_upgrade;
+      this.show_notification(ui_text.notifications.inactive_upgrade);
 
     // only allow upgrades if it hasn't been maxed out yet
   } else if (upgrade_obj.level >= upgrade_obj.max_level) {
       able_to_upgrade = false;
       // show max level reached message
-      notification_bar.textContent = ui_text.notifications.maxed_out_upgrade;
+      this.show_notification(ui_text.notifications.maxed_out_upgrade);
 
     // check if player has enough money to buy upgrade
   } else if (upgrade_obj.cost > this.clicks) {
       able_to_upgrade = false;
       // show a not enough money message
-      notification_bar.textContent = ui_text.notifications.need_more_money;
+      this.show_notification(ui_text.notifications.need_more_money);
     }
     return able_to_upgrade;
   };
@@ -488,7 +488,9 @@
     element_desc.innerHTML =
       this_text.description +
       '<br>' +
-      'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current.toFixed(2) + this_text.unit + ' | Max Lvl: ' + this_upgrade.max_level;
+      '<em>' +
+        'Upgrade: ' + this_text.prefix + this_upgrade.increase + this_text.unit + ' | Current: ' + this_upgrade.current.toFixed(2) + this_text.unit + ' | Max Lvl: ' + this_upgrade.max_level +
+      '</em>';
   };
 
   Player.prototype.roll_for_click = function() {
@@ -551,7 +553,7 @@
   // add class upgrades for upgrade menu
   upgrades.classList.add('upgrades');
   // Add a heading to the upgrades container
-  $(upgrades).append('<li><h2>'+ ui_text.upgrades_title  +'</h2></li>');
+  $(upgrades).append('<li class="upgrades-header"><h2>'+ ui_text.upgrades_title  +'</h2></li>');
 
   // init vars to use in the loop as references for current items
   var current_text_item;
@@ -578,7 +580,9 @@
           '<p>'+
             current_text_item.description +
             '<br>' +
+            '<em>' +
             'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit + ' | Max Lvl: ' + current_upgrade_item.max_level +
+            '</em>' +
           '</p>'+
         '</a>'+
       '</li>'
