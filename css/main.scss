@@ -150,6 +150,9 @@ main {
   background: url('../img/space.jpg') center center/cover;
   // stretch the background to at least the height of the viewport
   min-height: 100vh;
+  opacity: 1;
+  transition: 1s opacity;
+  width: 100%;
 }
 
 // Custom Scroll Bars
@@ -230,7 +233,7 @@ main {
 .counter {
   // so the pseudo element is positioned within the counter
   position: relative;
-  font-size: 3em;
+  font-size: 3.5em;
   color: #fff;
   text-shadow: 0 0 10px #000;
 }
@@ -238,13 +241,6 @@ main {
 // create a label for the counter
 .counter::before {
   @include margin-padding(auto, 0.3em 0);
-  // position it to the top left corner
-  position: absolute;
-  left: -3em;
-  top: -1.3em;
-  transform: rotate(-16deg);
-  // hack to fix the antialiasing
-  -webkit-backface-visibility: hidden;
   // effectively 1em since em sets size relative to parent element
   font-size: 0.2em;
   display: block;
@@ -402,13 +398,16 @@ main {
 PLUGINS
 ===================================================================== */
 
+$preloader-bg: #fff;
+$preloader-color: $red;
+
 .loader,
 .loader:before,
 .loader:after {
   border-radius: 50%;
 }
 .loader {
-  color: #ffffff;
+  color: $preloader-color;
   font-size: 11px;
   text-indent: -99999em;
   margin: 55px auto;
@@ -428,7 +427,7 @@ PLUGINS
 .loader:before {
   width: 5.2em;
   height: 10.2em;
-  background: #0dc5c1;
+  background: $preloader-bg;
   border-radius: 10.2em 0 0 10.2em;
   top: -0.1em;
   left: -0.1em;
@@ -440,7 +439,7 @@ PLUGINS
 .loader:after {
   width: 5.2em;
   height: 10.2em;
-  background: #0dc5c1;
+  background: $preloader-bg;
   border-radius: 0 10.2em 10.2em 0;
   top: -0.1em;
   left: 5.1em;
@@ -488,6 +487,7 @@ PLUGINS
  */
 
 .visuallyhidden {
+    opacity: 0;
     border: 0;
     clip: rect(0 0 0 0);
     height: 1px;
@@ -555,9 +555,21 @@ PLUGINS
     .cat {
       max-width: 30em;
     }
+
     .counter {
       font-size: 5em;
+
+      &::before {
+        // position it to the top left corner
+        position: absolute;
+        left: -3em;
+        top: -1.3em;
+        transform: rotate(-16deg);
+        // hack to fix the antialiasing
+        -webkit-backface-visibility: hidden;
+      }
     }
+
     .upgrades {
       li {
         display: inline-block;

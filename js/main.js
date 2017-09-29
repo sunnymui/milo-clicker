@@ -8,6 +8,8 @@
   // get the dom elements to append to
   // the clickable image layer that'll generate clicks
   var click_layer = document.querySelector('.clickable');
+  // the main element that contains all the game elements
+  var main = document.querySelector('main');
 
   // have like 10 divs off screen already then just use transform to position them at mouse location, prevents reflows. use those divs for the +1 message on every click. toggle opacity transitions on each one. this is just some extra niceness so do this later
 
@@ -533,6 +535,20 @@
   BUILD THE GAME
   ===========================================================
   */
+
+  // LOADING ANIMATION
+
+  // listen for dom content loaded before revealing everything
+  window.onload = function(){
+    // get the preloader element
+    var preloader = document.querySelector('.loader');
+    // remove the animated preloader from the dom
+    document.body.removeChild(preloader);
+    // remove the vertical center class from the body
+    document.body.classList.remove('v-center-childern');
+    // unhide the main element
+    main.classList.remove('visuallyhidden');
+  };
 
   // Map each ui text upgrade name to its index for use in player upgrade rendering function
   ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
