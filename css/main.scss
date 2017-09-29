@@ -99,6 +99,8 @@ textarea {
 
 $black: rgba(#000000, 0.65);
 $white: rgba(#ffffff, 0.65);
+$gold: #ecc66d;
+$red: #aa0000;
 
 // other vars
 
@@ -187,9 +189,11 @@ main {
 
 .clicked {
   position: absolute;
-  color: #fff;
   // so after animation runs it stays hidden
   opacity: 0;
+  // so it stays on top of everything
+  z-index: 100;
+  color: #fff;
   font-size: 2em;
   font-weight: bold;
   // so clicks fall through into the clickable layer instead
@@ -197,16 +201,27 @@ main {
   animation: fade-out-to-top 0.7s 1;
 
   &.critical {
-    color: #aa0000;
+    color: $red;
     font-size: 3em;
   }
 }
 
 .cat {
+  // on top of any absolutely position elements
+  position: relative;
+  // put it on top of everything
+  z-index: 10;
   max-width: 20em;
   cursor: pointer;
   // makes cat move around like floating in space
   animation: shake 60s infinite cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.robot {
+  position: absolute;
+  bottom: 33vh;
+  z-index: 0;
+  max-width: 8em;
 }
 
 // UI Elements
@@ -254,6 +269,7 @@ main {
   &.animate {
     animation: fade-from-bottom-2 0.3s 1;
   }
+
 }
 
 .upgrades {
@@ -268,8 +284,15 @@ main {
   list-style: none;
 
   a {
-    color: #fff;
+    color: $gold;
     text-decoration: none;
+  }
+
+  img {
+    float: left;
+    margin-right: 1em;
+    border: 1px solid $gold;
+    border-radius: 5px;
   }
 
   h2 {

@@ -121,8 +121,9 @@ main {
 
 .clicked {
   position: absolute;
-  color: #fff;
   opacity: 0;
+  z-index: 100;
+  color: #fff;
   font-size: 2em;
   font-weight: bold;
   pointer-events: none;
@@ -132,9 +133,17 @@ main {
     font-size: 3em; }
 
 .cat {
+  position: relative;
+  z-index: 10;
   max-width: 20em;
   cursor: pointer;
   animation: shake 60s infinite cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+.robot {
+  position: absolute;
+  bottom: 33vh;
+  z-index: 0;
+  max-width: 8em; }
 
 .counter {
   position: relative;
@@ -181,8 +190,13 @@ main {
   overflow: scroll;
   list-style: none; }
   .upgrades a {
-    color: #fff;
+    color: #ecc66d;
     text-decoration: none; }
+  .upgrades img {
+    float: left;
+    margin-right: 1em;
+    border: 1px solid #ecc66d;
+    border-radius: 5px; }
   .upgrades h2 {
     margin-top: 0; }
   .upgrades h3 {

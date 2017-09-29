@@ -15,7 +15,13 @@
 
   // pics and external stuff to load
   var assets = {
-    milo_src: 'img/milo.png'
+    milo_src: 'img/milo.png',
+    crit_chance_src: 'img/Power%20of%20blessing.png',
+    crit_multiplier_src: 'img/Magic%20Reflection.png',
+    autoclicker_src: 'img/Scatter.png',
+    autoclicker_delay_src: 'img/Wind%20Haste.png',
+    click_multiplier_src: 'img/Thunder.png',
+    roomba_cat_src: 'img/roombacat.png'
   };
   // text content
   var ui_text = {
@@ -152,7 +158,7 @@
         // the ms delay between autoclicks
         current: 2010,
         active: false,
-        cost: 5,
+        cost: 10,
         cost_multiplier: 2.1,
         level: 0,
         max_level: 20,
@@ -189,10 +195,17 @@
       // if not, just add the regular clicked class
       click_animation.classList.add('clicked');
     }
-    // position the click amt slightly to the left
-    click_animation.style.left = x - 20 +'px';
-    // and above the mouse cursor
-    click_animation.style.top = y - 35 + 'px';
+    // check if we have the units specified for position, not just pixel #
+    if (isNaN(x)||isNaN(y)) {
+      // position exactly as passed in
+      click_animation.style.left = x;
+      click_animation.style.top = y;
+    } else {
+      // position the click amt slightly to the left
+      click_animation.style.left = x - 20 +'px';
+      // and above the mouse cursor
+      click_animation.style.top = y - 35 + 'px';
+    }
     // set text to the amount we incremented clicks by
     click_animation.textContent = '+' + this.last_click_increment;
     // append the click amount display to the actual dom
@@ -355,6 +368,11 @@
       // run autoclick every x seconds as set in autoclicker delay using setInterval
       // bind autoclick so this = player in the callback
       this.autoclicker = setInterval(this.autoclick.bind(this), this.upgrades.autoclicker_delay.current);
+
+      var robot_img = document.createElement('img');
+      robot_img.classList.add('robot');
+      robot_img.src = assets.roomba_cat_src;
+      click_layer.appendChild(robot_img);
     }
 
     // reinitiate setInterval w/ updated delay if an autoclicker delay upgrade
@@ -376,8 +394,13 @@
     */
     // increment clicks by amount of autoclickers multiplied by current base click multiplier
     this.clicks += (this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current);
+    //
+    this.last_click_increment = this.upgrades.autoclicker.current * this.upgrades.click_multiplier.current;
+    this.last_click_crit = false;
     // display player clicks amount in click counter
     this.render_clicks();
+    // render the click increment animation at mouse click location
+    this.render_click_animation('50%', '56%');
   };
 
   Player.prototype.unlock_next_upgrade = function(current_upgrade) {
@@ -529,6 +552,7 @@
     current_text_item = ui_text.upgrades[i];
     // the current upgrade in the player.upgrades object
     current_upgrade_item = player.upgrades[current_text_item.class];
+    // add inactive class to items that aren't unlocked yet to hide
     if (!current_upgrade_item.active) {
       inactive_class = ' inactive';
     }
@@ -536,6 +560,7 @@
     $(upgrades).append(
       '<li class="'+ current_text_item.class + inactive_class +'">'+
         '<a href="#">'+
+          '<img src="' + assets[current_text_item.class+'_src'] +'">'+
           '<h3>'+
             '$' + current_upgrade_item.cost + ' - ' + current_text_item.title + ' - Lvl ' + current_upgrade_item.level +
           '</h3>'+
