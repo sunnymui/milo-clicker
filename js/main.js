@@ -111,6 +111,8 @@
     this.last_click_crit = false;
     // autoclicker function placeholder
     this.autoclicker = function(){};
+    // notification to show
+    this.notification = '';
 
     // player clicker upgrades info and settings
     this.upgrades = {
@@ -237,71 +239,17 @@
   */
     // init var to store access a specific upgrade property
     var this_upgrade;
-    // execute upgrade actions based on upgrade type
-    switch (type) {
-      case 'crit_chance':
-        // set current upgrade to the crit chance property in upgrades
-        this_upgrade = this.upgrades.crit_chance;
-        // check conditions, if player is able to upgrade
-        if (this.check_if_able_to_upgrade(this_upgrade)) {
-          // increment the relevant upgrade stats and settings
-          this.update_upgrade_stats(this_upgrade);
-          // unlock the next upgrade in the menu
-          this.unlock_next_upgrade(type);
-          // show the crit chance notification message
-          this.show_notification(ui_text.notifications.crit_chance_upgrade);
-        }
-        break;
-      case 'crit_multiplier':
-        // set current upgrade to the crit multiplier property in upgrades
-        this_upgrade = this.upgrades.crit_multiplier;
-        // check conditions, if player is able to upgrade
-        if (this.check_if_able_to_upgrade(this_upgrade)) {
-          // increment the relevant upgrade stats and settings
-          this.update_upgrade_stats(this_upgrade);
-          // unlock the next upgrade in the menu
-          this.unlock_next_upgrade(type);
-          // show the crit chance notification message
-          this.show_notification(ui_text.notifications.crit_multiplier_upgrade);
-        }
-        break;
-      case 'autoclicker':
-        // set current upgrade to the autoclicker property in upgrades
-        this_upgrade = this.upgrades.autoclicker;
-        // check conditions, if player is able to upgrade
-        if (this.check_if_able_to_upgrade(this_upgrade)) {
-          // increment the relevant upgrade stats and settings
-          this.update_upgrade_stats(this_upgrade);
-          // unlock the next upgrade in the menu
-          this.unlock_next_upgrade(type);
-          // show the crit chance notification message
-          this.show_notification(ui_text.notifications.autoclicker_upgrade);
-        }
-        break;
-      case 'autoclicker_delay':
-        // set current upgrade to the autoclicker property in upgrades
-        this_upgrade = this.upgrades.autoclicker_delay;
-        // check conditions, if player is able to upgrade
-        if (this.check_if_able_to_upgrade(this_upgrade)) {
-          // increment the relevant upgrade stats and settings
-          this.update_upgrade_stats(this_upgrade);
-          // unlock the next upgrade in the menu
-          this.unlock_next_upgrade(type);
-          // show the crit chance notification message
-          this.show_notification(ui_text.notifications.autoclicker_delay_upgrade);
-        }
-        break;
-      case 'click_multiplier':
-        // set current upgrade to the autoclicker property in upgrades
-        this_upgrade = this.upgrades.click_multiplier;
-        // check conditions, if player is able to upgrade
-        if (this.check_if_able_to_upgrade(this_upgrade)) {
-          // increment the relevant upgrade stats and settings
-          this.update_upgrade_stats(this_upgrade);
-          // show the crit chance notification message
-          this.show_notification(ui_text.notifications.click_multiplier_upgrade);
-        }
-        break;
+
+    // set current upgrade to the crit chance property in upgrades
+    this_upgrade = this.upgrades[type];
+    // check conditions, if player is able to upgrade
+    if (this.check_if_able_to_upgrade(this_upgrade)) {
+      // increment the relevant upgrade stats and settings
+      this.update_upgrade_stats(this_upgrade);
+      // unlock the next upgrade in the menu
+      this.unlock_next_upgrade(type);
+      // show the crit chance notification message
+      this.show_notification(ui_text.notifications[type+'_upgrade']);
     }
 
     // update live upgrades menu stats in the displayed dom
