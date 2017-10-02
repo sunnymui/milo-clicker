@@ -199,6 +199,7 @@ main {
   color: #fff;
   font-size: 2em;
   font-weight: bold;
+  text-align: center;
   // so clicks fall through into the clickable layer instead
   pointer-events: none;
   animation: fade-out-to-top 0.7s 1 ease-in;
@@ -206,6 +207,12 @@ main {
   &.critical {
     color: $red;
     font-size: 3em;
+
+    &::after {
+      display: block;
+      font-size: 0.4em;
+      content: 'CRITICAL!';
+    }
   }
 }
 

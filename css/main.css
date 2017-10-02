@@ -129,11 +129,16 @@ main {
   color: #fff;
   font-size: 2em;
   font-weight: bold;
+  text-align: center;
   pointer-events: none;
   animation: fade-out-to-top 0.7s 1 ease-in; }
   .clicked.critical {
     color: #aa0000;
     font-size: 3em; }
+    .clicked.critical::after {
+      display: block;
+      font-size: 0.4em;
+      content: 'CRITICAL!'; }
 
 .cat {
   position: relative;
