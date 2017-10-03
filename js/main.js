@@ -62,6 +62,7 @@
         prefix: '+'
       }
     ],
+    sidebar_tooltip: 'Upgrade Level:',
     upgrades_title: 'Buy Upgrades',
     notifications: {
       maxed_out_upgrade: "CAN'T UPGRADE! Max level reached for upgrade!",
@@ -74,9 +75,9 @@
       click_multiplier_upgrade: 'Each of your Clicks Are Worth More $ Meow!',
       autoclicker_upgrade: 'RoboCat Upgraded!',
       autoclicker_delay_upgrade: 'RoboCat Clicks Faster Meow!',
-      instructions: 'Click Milo the cat, get $ MiloBucks(TM), & buy upgrades to get more $!'
+      instructions: 'Click Milo the cat and get $ MiloBucks to buy upgrades!'
     },
-    counter_start: 'Click Milo, Get $!'
+    counter_start: 'Click Milo Get $!'
   };
 
   //=========================//
@@ -180,15 +181,18 @@
     };
   };
 
-  Player.prototype.render_click_animation = function(x, y) {
+  Player.prototype.render_click_animation = function(x, y, type) {
     /*
     Take in click location coordinates and put a click increment
     animation at that location that disappears eventually.
     Args: x, y locations to render click animation at (int or string)
     Return: na
     */
+    // set default of count if nothing/falsey passed in as type
+    type = type || 'count';
     // create element to hold the animated click amount display
     var click_animation = document.createElement('div');
+
     // check if we have hit a critical during the roll
     if (this.last_click_crit) {
       // if critical, add critical class also
@@ -197,7 +201,7 @@
       // if not, just add the regular clicked class
       click_animation.classList.add('clicked');
     }
-    // check if we have the units specified for position, not just pixel #
+    // check if we have the units specified for position, not just pixel # in args
     if (isNaN(x)||isNaN(y)) {
       // position exactly as passed in
       click_animation.style.left = x;
@@ -208,8 +212,15 @@
       // and above the mouse cursor
       click_animation.style.top = y - 35 + 'px';
     }
-    // set text to the amount we incremented clicks by
-    click_animation.textContent = '+' + this.last_click_increment;
+    // show click amount count animation if that type of click
+    if (type === 'count') {
+      // set text to the amount we incremented clicks by
+      click_animation.textContent = '+' + this.last_click_increment;
+    } else if (type === 'upgrade') {
+      // show upgraded text as the click animation
+      click_animation.textContent = 'Upgraded!';
+    }
+
     // append the click amount display to the actual dom
     click_layer.appendChild(click_animation);
     // set a delayed callback to remove the element after the animation
@@ -498,6 +509,8 @@
     main.classList.remove('visuallyhidden');
   };
 
+  // INITIAL SETUP
+
   // Map each ui text upgrade name to its index for use in player upgrade rendering function
   ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
     // set the class name as key and the index as value
@@ -509,8 +522,58 @@
   // instantiate a player object for the game
   var player = new Player();
 
+  // GAME ELEMENT CREATION
+
   // dom fragment to store all the ui stuff, reduce number of append operations
   var ui_elements = document.createDocumentFragment();
+
+  // create element for all the notifications in game
+  var notification_bar = document.createElement('h3');
+  // add notifications class to the notifications element
+  notification_bar.classList.add('notifications', 'center-text');
+  // set starting text in the notifications bar to game instructions
+  notification_bar.textContent = ui_text.notifications.instructions;
+
+  // create an upgrades/lvls tracker sidebar element
+  var upgrades_sidebar = document.createElement('ul');
+  // create the li item for the sidebar list
+  var upgrades_sidebar_item = document.createElement('li');
+  // create the text label for the sidebar item
+  var upgrades_sidebar_label = document.createElement('p');
+  // create the img element for the sidebar item
+  var upgrades_sidebar_img = document.createElement('img');
+  // assign crit chance img src
+  upgrades_sidebar_img.src = assets.crit_chance_src;
+  // make the label equal to the level of the unclocked skill
+  upgrades_sidebar_label.textContent = player.upgrades.crit_chance.level;
+  // add a title attribute
+  upgrades_sidebar_item.title = ui_text.upgrades[0].title + ' - ' + ui_text.sidebar_tooltip + ' ' + player.upgrades.crit_chance.level;
+  // append the label to the li
+  upgrades_sidebar_item.appendChild(upgrades_sidebar_label);
+  // append the img to the li
+  upgrades_sidebar_item.appendChild(upgrades_sidebar_img);
+  // append the li to the ul
+  upgrades_sidebar.appendChild(upgrades_sidebar_item);
+  // add the upgrades tracker class
+  upgrades_sidebar.classList.add('upgrades-tracker');
+  // add the vertical centering class to label
+  upgrades_sidebar_label.classList.add('v-center-absolute');
+
+  // create element for click amount counter
+  var click_counter = document.createElement('h2');
+  // add counter class to click counter
+  click_counter.classList.add('counter', 'center-text');
+  // start click counter at 0
+  click_counter.textContent = ui_text.counter_start;
+
+  // create the img element for the cat
+  var milo = document.createElement('img');
+  // set image source to milo's pic
+  milo.src = assets.milo_src;
+  // prevent draggable selection on the img from interfering with clicks
+  milo.draggable = false;
+  // add cat class to milo element
+  milo.classList.add('cat');
 
   // Create the upgrades menu
   var upgrades = document.createElement('ul');
@@ -553,31 +616,10 @@
     );
   }
 
-  // create element for all the notifications in game
-  var notification_bar = document.createElement('h3');
-  // add notifications class to the notifications element
-  notification_bar.classList.add('notifications', 'center-text');
-  // set starting text in the notifications bar to game instructions
-  notification_bar.textContent = ui_text.notifications.instructions;
-
-  // create element for click amount counter
-  var click_counter = document.createElement('h2');
-  // add counter class to click counter
-  click_counter.classList.add('counter', 'center-text');
-  // start click counter at 0
-  click_counter.textContent = ui_text.counter_start;
-
-  // create the img element for the cat
-  var milo = document.createElement('img');
-  // set image source to milo's pic
-  milo.src = assets.milo_src;
-  // prevent draggable selection on the img from interfering with clicks
-  milo.draggable = false;
-  // add cat class to milo element
-  milo.classList.add('cat');
-
   // add the notification bar to dom fragment
   ui_elements.appendChild(notification_bar);
+  // add upgrade tracking sidebar to dom fragment
+  ui_elements.appendChild(upgrades_sidebar);
   // add the click counter element to the dom fragment
   ui_elements.appendChild(click_counter);
   // append clickable cat element to the clickable layer in the live dom

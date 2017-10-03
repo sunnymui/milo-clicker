@@ -98,6 +98,11 @@ textarea {
   align-items: center;
   justify-content: space-between; }
 
+.v-center-absolute {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%); }
+
 main {
   background: url("../img/space.jpg") center center/cover;
   min-height: 100vh;
@@ -174,7 +179,7 @@ main {
 
 .notifications {
   margin: 0;
-  padding: 1em;
+  padding: 0.5em;
   width: 100%;
   background: rgba(0, 0, 0, 0.65);
   border-bottom: 1px solid #fff;
@@ -183,11 +188,36 @@ main {
   animation: fade-from-bottom-1 0.3s 1; }
   .notifications.animate {
     animation: fade-from-bottom-2 0.3s 1; }
+  .notifications.red {
+    color: #aa0000; }
+
+.upgrades-tracker {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0.5em;
+  top: 5em;
+  width: 66px;
+  max-width: 10%;
+  list-style: none; }
+  .upgrades-tracker li {
+    position: relative;
+    border-radius: 100%;
+    overflow: hidden; }
+  .upgrades-tracker p {
+    margin: 0;
+    padding: 0.3em;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    text-align: center;
+    text-shadow: 1px 1px 5px #fff; }
+  .upgrades-tracker img {
+    max-width: 100%; }
 
 .upgrades {
-  margin: 2%;
-  padding: 1em;
-  margin-top: 0;
+  margin: 0 1em 1em 1em;
+  padding: 0 1em 1em 1em;
   width: 94%;
   background: rgba(0, 0, 0, 0.65);
   color: #fff;
@@ -195,7 +225,7 @@ main {
   overflow: scroll;
   overflow-x: hidden;
   list-style: none;
-  border: 1px solid #fff;
+  border: 4px double #fff;
   border-radius: 5px; }
   .upgrades a {
     color: #ecc66d;
@@ -206,7 +236,7 @@ main {
     border: 1px solid #ecc66d;
     border-radius: 5px; }
   .upgrades h2 {
-    margin-top: 0; }
+    margin: 0; }
   .upgrades h3 {
     margin: 0;
     padding: 0;
@@ -218,7 +248,10 @@ main {
     width: 100%; }
     .upgrades li.upgrades-header {
       display: block;
-      max-width: 100%; }
+      width: 100%;
+      border-bottom: 1px solid #fff;
+      margin: 0.5em 0 0.8em 0;
+      padding-bottom: 0.5em; }
     .upgrades li.inactive {
       display: none; }
   .upgrades li:hover {
