@@ -64,6 +64,7 @@
     ],
     sidebar_tooltip: 'Upgrade Level:',
     upgrades_title: 'Buy Upgrades',
+    sidebar_title: 'Current Upgrades',
     notifications: {
       maxed_out_upgrade: "CAN'T UPGRADE! Max level reached for upgrade!",
       inactive_upgrade: 'Sorry, you must unlock upgrade by buying  previous upgrade type first',
@@ -94,6 +95,147 @@
     Return: a random number (floating point) in the range
     */
       return Math.random() * (max-min) + min;
+    }
+  };
+
+  //=============================//
+  //    UI Creation Functions    //
+  //=============================//
+
+  var generate_ui = {
+    notification_bar: function() {
+      // create element for all the notifications in game
+      var notification_bar = document.createElement('h3');
+      // add notifications class to the notifications element
+      notification_bar.classList.add('notifications', 'center-text');
+      // set starting text in the notifications bar to game instructions
+      notification_bar.textContent = ui_text.notifications.instructions;
+
+      return notification_bar;
+    },
+    upgrades_sidebar: function() {
+      // create an upgrades/lvls tracker sidebar element
+      var upgrades_sidebar = document.createElement('ul');
+      // init var for list items in the sidebar
+      var upgrades_sidebar_item;
+      // init var for current upgrade in the list
+      var current_upgrade;
+      // generate the initial crit chance upgrade list item
+      for (i = 0; i < ui_text.upgrades.length; i+=1) {
+        // cache ref to the current upgrade in the ui text array
+        current_upgrade = ui_text.upgrades[i];
+        // generate the upgrade based on the upgrade class name
+        upgrades_sidebar_item = this.upgrades_sidebar_item(current_upgrade.class);
+        // add identifier attribute to the element
+        upgrades_sidebar_item.setAttribute('data-id', current_upgrade.class);
+        // after the first sidebar item
+        if (i > 0) {
+          // hide the rest until unlocked
+          upgrades_sidebar_item.classList.add('inactive');
+        }
+        // add the upgrade sidebar item to the sidebar list
+        upgrades_sidebar.appendChild(upgrades_sidebar_item);
+      }
+      // add the upgrades tracker class
+      upgrades_sidebar.classList.add('upgrades-tracker');
+
+      return upgrades_sidebar;
+    },
+    upgrades_sidebar_item: function(type) {
+      // cache easier to read reference to the ui text upgrades array
+      var upgrade_text = ui_text.upgrades;
+      // cache easier to read reference to the ui text upgrade indexes
+      var indexes = ui_text.upgrade_indexes;
+      // create the li item for the sidebar list
+      var upgrades_sidebar_item = document.createElement('li');
+      // create the text label for the sidebar item
+      var upgrades_sidebar_label = document.createElement('p');
+      // create the img element for the sidebar item
+      var upgrades_sidebar_img = document.createElement('img');
+      // assign crit chance img src
+      upgrades_sidebar_img.src = assets[type+'_src'];
+      // make the label equal to the level of the unclocked skill
+      upgrades_sidebar_label.textContent = player.upgrades[type].level;
+      // add a title attribute
+      upgrades_sidebar_item.title = upgrade_text[indexes[type]].title +
+                                    ' - ' +
+                                    ui_text.sidebar_tooltip +
+                                    ' ' +
+                                    player.upgrades[type].level;
+      // append the label to the li
+      upgrades_sidebar_item.appendChild(upgrades_sidebar_label);
+      // append the img to the li
+      upgrades_sidebar_item.appendChild(upgrades_sidebar_img);
+      // add the vertical centering class to label
+      upgrades_sidebar_label.classList.add('v-center-absolute');
+
+      return upgrades_sidebar_item;
+    },
+    counter: function () {
+      // create element for click amount counter
+      var click_counter = document.createElement('h2');
+      // add counter class to click counter
+      click_counter.classList.add('counter', 'center-text');
+      // start click counter at 0
+      click_counter.textContent = ui_text.counter_start;
+
+      return click_counter;
+    },
+    cat: function () {
+      // create the img element for the cat
+      var cat = document.createElement('img');
+      // set image source to milo's pic
+      cat.src = assets.milo_src;
+      // prevent draggable selection on the img from interfering with clicks
+      cat.draggable = false;
+      // add cat class to milo element
+      cat.classList.add('cat');
+
+      return cat;
+    },
+    upgrades_menu: function() {
+      // Create the upgrades menu
+      var upgrades = document.createElement('ul');
+      // add class upgrades for upgrade menu
+      upgrades.classList.add('upgrades');
+      // Add a heading to the upgrades container
+      $(upgrades).append('<li class="upgrades-header"><h2>'+ ui_text.upgrades_title  +'</h2></li>');
+
+      // init vars to use in the loop as references for current items
+      var current_text_item;
+      var current_upgrade_item;
+      var inactive_class = '';
+      // append each of the upgrade options to the ui list container element
+      for (i=0; i < ui_text.upgrades.length; i += 1) {
+        // the current item in the ui text object
+        current_text_item = ui_text.upgrades[i];
+        // the current upgrade in the player.upgrades object
+        current_upgrade_item = player.upgrades[current_text_item.class];
+        // add inactive class to items that aren't unlocked yet to hide
+        if (!current_upgrade_item.active) {
+          inactive_class = ' inactive';
+        }
+        // append li html to the upgrades ul
+        $(upgrades).append(
+          '<li class="'+ current_text_item.class + inactive_class +'">'+
+            '<a href="#">'+
+              '<img src="' + assets[current_text_item.class+'_src'] +'">'+
+              '<h3>'+
+                '$' + current_upgrade_item.cost + ' - ' + current_text_item.title + ' - Lvl ' + current_upgrade_item.level +
+              '</h3>'+
+              '<p>'+
+                current_text_item.description +
+                '<br>' +
+                '<em>' +
+                'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit + ' | Max Lvl: ' + current_upgrade_item.max_level +
+                '</em>' +
+              '</p>'+
+            '</a>'+
+          '</li>'
+        );
+      }
+
+      return upgrades;
     }
   };
 
@@ -398,6 +540,8 @@
       this.upgrades[next_upgrade].active = true;
       // remove inactive class of next upgrade
       document.getElementsByClassName(next_upgrade)[0].classList.remove(inactive_class);
+      // unlock the next upgrade in the sidebar by removing hidden class
+      $(".upgrades-tracker li[data-id='"+ next_upgrade +"']").removeClass('inactive');
     }
   };
 
@@ -433,16 +577,22 @@
     var element_title = document.querySelector(upgrade_class + ' h3');
     // the paragraph elemene tfor the current upgrade
     var element_desc = document.querySelector(upgrade_class + ' p');
+    // get the upgrade element in the sidebar
+    var sidebar_upgrade_label = document.querySelector('li[data-id='+ type +'] p');
 
     // render different format if can't be upgraded since at max level
     if (this_upgrade.level === this_upgrade.max_level) {
       // update the displayed title for the current upgrade
       element_title.innerHTML =
         '<del>' + this_text.title + '</del>' + ' - MAX LVL';
+      // display max in sidebar label
+      sidebar_upgrade_label.textContent = 'MAX';
     } else {
       // update the displayed title with current level and cost info
       element_title.innerHTML =
         this_upgrade.cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'}) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
+      // update sidebar label of current upgrade with current level
+      sidebar_upgrade_label.textContent = this_upgrade.level;
     }
 
     // update the displayed description for the current upgrade
@@ -528,93 +678,15 @@
   var ui_elements = document.createDocumentFragment();
 
   // create element for all the notifications in game
-  var notification_bar = document.createElement('h3');
-  // add notifications class to the notifications element
-  notification_bar.classList.add('notifications', 'center-text');
-  // set starting text in the notifications bar to game instructions
-  notification_bar.textContent = ui_text.notifications.instructions;
-
+  var notification_bar = generate_ui.notification_bar();
   // create an upgrades/lvls tracker sidebar element
-  var upgrades_sidebar = document.createElement('ul');
-  // create the li item for the sidebar list
-  var upgrades_sidebar_item = document.createElement('li');
-  // create the text label for the sidebar item
-  var upgrades_sidebar_label = document.createElement('p');
-  // create the img element for the sidebar item
-  var upgrades_sidebar_img = document.createElement('img');
-  // assign crit chance img src
-  upgrades_sidebar_img.src = assets.crit_chance_src;
-  // make the label equal to the level of the unclocked skill
-  upgrades_sidebar_label.textContent = player.upgrades.crit_chance.level;
-  // add a title attribute
-  upgrades_sidebar_item.title = ui_text.upgrades[0].title + ' - ' + ui_text.sidebar_tooltip + ' ' + player.upgrades.crit_chance.level;
-  // append the label to the li
-  upgrades_sidebar_item.appendChild(upgrades_sidebar_label);
-  // append the img to the li
-  upgrades_sidebar_item.appendChild(upgrades_sidebar_img);
-  // append the li to the ul
-  upgrades_sidebar.appendChild(upgrades_sidebar_item);
-  // add the upgrades tracker class
-  upgrades_sidebar.classList.add('upgrades-tracker');
-  // add the vertical centering class to label
-  upgrades_sidebar_label.classList.add('v-center-absolute');
-
+  var upgrades_sidebar = generate_ui.upgrades_sidebar();
   // create element for click amount counter
-  var click_counter = document.createElement('h2');
-  // add counter class to click counter
-  click_counter.classList.add('counter', 'center-text');
-  // start click counter at 0
-  click_counter.textContent = ui_text.counter_start;
-
+  var click_counter = generate_ui.counter();
   // create the img element for the cat
-  var milo = document.createElement('img');
-  // set image source to milo's pic
-  milo.src = assets.milo_src;
-  // prevent draggable selection on the img from interfering with clicks
-  milo.draggable = false;
-  // add cat class to milo element
-  milo.classList.add('cat');
-
+  var milo = generate_ui.cat();
   // Create the upgrades menu
-  var upgrades = document.createElement('ul');
-  // add class upgrades for upgrade menu
-  upgrades.classList.add('upgrades');
-  // Add a heading to the upgrades container
-  $(upgrades).append('<li class="upgrades-header"><h2>'+ ui_text.upgrades_title  +'</h2></li>');
-
-  // init vars to use in the loop as references for current items
-  var current_text_item;
-  var current_upgrade_item;
-  var inactive_class = '';
-  // append each of the upgrade options to the ui list container element
-  for (i=0; i < ui_text.upgrades.length; i += 1) {
-    // the current item in the ui text object
-    current_text_item = ui_text.upgrades[i];
-    // the current upgrade in the player.upgrades object
-    current_upgrade_item = player.upgrades[current_text_item.class];
-    // add inactive class to items that aren't unlocked yet to hide
-    if (!current_upgrade_item.active) {
-      inactive_class = ' inactive';
-    }
-    // append li html to the upgrades ul
-    $(upgrades).append(
-      '<li class="'+ current_text_item.class + inactive_class +'">'+
-        '<a href="#">'+
-          '<img src="' + assets[current_text_item.class+'_src'] +'">'+
-          '<h3>'+
-            '$' + current_upgrade_item.cost + ' - ' + current_text_item.title + ' - Lvl ' + current_upgrade_item.level +
-          '</h3>'+
-          '<p>'+
-            current_text_item.description +
-            '<br>' +
-            '<em>' +
-            'Upgrade: ' + current_text_item.prefix + current_upgrade_item.increase + current_text_item.unit + ' | Current: ' + current_upgrade_item.current + current_text_item.unit + ' | Max Lvl: ' + current_upgrade_item.max_level +
-            '</em>' +
-          '</p>'+
-        '</a>'+
-      '</li>'
-    );
-  }
+  var upgrades = generate_ui.upgrades_menu();
 
   // add the notification bar to dom fragment
   ui_elements.appendChild(notification_bar);

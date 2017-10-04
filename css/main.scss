@@ -182,9 +182,9 @@ main {
 	background-image: -webkit-gradient(linear,
 									   left bottom,
 									   left top,
-									   color-stop(0.44, rgb(85, 107, 152)),
-									   color-stop(0.72, rgb(49, 84, 126)),
-									   color-stop(0.86, rgb(15, 31, 79)));
+									   color-stop(0.44, rgb(116, 127, 148)),
+									   color-stop(0.72, rgb(58, 87, 121)),
+									   color-stop(0.86, rgb(25, 36, 70)));
 }
 
 // Clickable Layer
@@ -220,6 +220,14 @@ main {
       content: 'CRITICAL!';
     }
   }
+
+  &.upgrade {
+    color: $gold;
+  }
+
+  &.no-money {
+
+  }
 }
 
 .cat {
@@ -247,6 +255,7 @@ main {
   // so the pseudo element is positioned within the counter
   position: relative;
   font-size: 3.5em;
+  margin: 0.5em auto;
   color: #fff;
   text-shadow: 0 0 10px #000;
 }
@@ -287,27 +296,37 @@ main {
 }
 
 .upgrades-tracker {
-    @include margin-padding(0,0);
-    position: absolute;
-    left: 0.5em;
-    top: 5em;
+    @include margin-padding(0 auto,0);
     // the width of the upgrade pics
-    width: 66px;
-    max-width: 10%;
+    text-align: center;
     list-style: none;
 
     li {
-      // to keep it positioned within the list item
+      // to keep children positioned within the list item
       position: relative;
       // circles for the pics
       border-radius: 100%;
+      // so everything next to each other and text align center will center
+      display: inline-block;
       overflow: hidden;
+      margin: 0.5em;
+      transition: 1s opacity;
+      opacity: 1;
+      width: 55px;
+      max-width: 15vw;
+
+      &.inactive {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
     }
 
     p {
       @include margin-padding(0,0.3em);
       color: #fff;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.55);
       // so it gets centered and bg is length of bg img
       width: 100%;
       text-align: center;
@@ -315,9 +334,18 @@ main {
     }
 
     img {
+      // stretch proportionately by width
       max-width: 100%;
     }
 
+    &::after {
+      display: block;
+      margin: 0 auto;
+      color: #fff;
+      font-size: 0.8em;
+      text-align: center;
+      content: 'Current Upgrades';
+    }
 }
 
 .upgrades {

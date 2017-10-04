@@ -121,7 +121,7 @@ main {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, #556b98), color-stop(0.72, #31547e), color-stop(0.86, #0f1f4f)); }
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, #747f94), color-stop(0.72, #3a5779), color-stop(0.86, #192446)); }
 
 .clickable {
   min-height: 100vh;
@@ -144,6 +144,8 @@ main {
       display: block;
       font-size: 0.4em;
       content: 'CRITICAL!'; }
+  .clicked.upgrade {
+    color: #ecc66d; }
 
 .cat {
   position: relative;
@@ -162,6 +164,7 @@ main {
 .counter {
   position: relative;
   font-size: 3.5em;
+  margin: 0.5em auto;
   color: #fff;
   text-shadow: 0 0 10px #000; }
 
@@ -192,28 +195,42 @@ main {
     color: #aa0000; }
 
 .upgrades-tracker {
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-  position: absolute;
-  left: 0.5em;
-  top: 5em;
-  width: 66px;
-  max-width: 10%;
+  text-align: center;
   list-style: none; }
   .upgrades-tracker li {
     position: relative;
     border-radius: 100%;
-    overflow: hidden; }
+    display: inline-block;
+    overflow: hidden;
+    margin: 0.5em;
+    transition: 1s opacity;
+    opacity: 1;
+    width: 55px;
+    max-width: 15vw; }
+    .upgrades-tracker li.inactive {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute; }
   .upgrades-tracker p {
     margin: 0;
     padding: 0.3em;
     color: #fff;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.55);
     width: 100%;
     text-align: center;
     text-shadow: 1px 1px 5px #fff; }
   .upgrades-tracker img {
     max-width: 100%; }
+  .upgrades-tracker::after {
+    display: block;
+    margin: 0 auto;
+    color: #fff;
+    font-size: 0.8em;
+    text-align: center;
+    content: 'Current Upgrades'; }
 
 .upgrades {
   margin: 0 1em 1em 1em;
