@@ -64,8 +64,13 @@
     ],
     sidebar_tooltip: 'Upgrade Level:',
     upgrades_title: 'Buy Upgrades',
-    sidebar_title: 'Current Upgrades',
     notifications: {
+      clicked: {
+        upgraded: 'Upgraded!',
+        no_money: 'NOT ENOUGH $',
+        max_level: 'MAX LEVEL REACHED',
+        upgrade_unlocked: 'Upgrade Unlocked'
+      },
       maxed_out_upgrade: "CAN'T UPGRADE! Max level reached for upgrade!",
       inactive_upgrade: 'Sorry, you must unlock upgrade by buying  previous upgrade type first',
       need_more_money: 'MORE $ NEEDED (^=˃ᆺ˂) Keep Clickin!',
@@ -327,7 +332,8 @@
     /*
     Take in click location coordinates and put a click increment
     animation at that location that disappears eventually.
-    Args: x, y locations to render click animation at (int or string)
+    Args: x, y locations to render click animation at (int or string),
+          type - the type of click animation to render
     Return: na
     */
     // set default of count if nothing/falsey passed in as type
@@ -355,12 +361,31 @@
       click_animation.style.top = y - 35 + 'px';
     }
     // show click amount count animation if that type of click
-    if (type === 'count') {
-      // set text to the amount we incremented clicks by
-      click_animation.textContent = '+' + this.last_click_increment;
-    } else if (type === 'upgrade') {
-      // show upgraded text as the click animation
-      click_animation.textContent = 'Upgraded!';
+    switch (type) {
+      case 'count':
+        // set text to the amount we incremented clicks by
+        click_animation.textContent = '+' + this.last_click_increment;
+        break;
+      case 'upgrade':
+        // show upgraded text as the click animation
+        click_animation.textContent = ui_text.notifications.clicked.upgraded;
+        break;
+      case 'no-money':
+        // add not enough money class
+        click_animation.classList.add('no-money');
+        // set not enough $ text
+        click_animation.textContent = ui_text.notifications.clicked.no_money;
+        break;
+      case 'max-level':
+        // set max level text
+        click_animation.textContent = ui_text.notifications.clicked.max_level;
+        break;
+      case 'upgrade-unlocked':
+        // add not enough money class
+        click_animation.classList.add('upgrade-unlocked');
+        // set upgrade unlocked text
+        click_animation.textContent = ui_text.notifications.clicked.upgrade_unlocked;
+        break;
     }
 
     // append the click amount display to the actual dom
@@ -383,11 +408,11 @@
     click_counter.textContent = clicks;
   };
 
-  Player.prototype.upgrade = function(type) {
+  Player.prototype.upgrade = function(type, x, y) {
   /*
   Activates an upgrade, levels the stats, and increments it in the player instance, displays notification according to
   the type of upgrade. Unlocks the next upgrade in the list.
-  Args: type of upgrade (string)
+  Args: type of upgrade (string), x (int) mouse click location, y (int) mouse click location
   Return: na
   */
     // init var to store access a specific upgrade property
@@ -396,26 +421,28 @@
     // set current upgrade to the crit chance property in upgrades
     this_upgrade = this.upgrades[type];
     // check conditions, if player is able to upgrade
-    if (this.check_if_able_to_upgrade(this_upgrade)) {
+    if (this.check_if_able_to_upgrade(this_upgrade, x, y)) {
       // increment the relevant upgrade stats and settings
       this.update_upgrade_stats(this_upgrade);
       // unlock the next upgrade in the menu
-      this.unlock_next_upgrade(type);
+      this.unlock_next_upgrade(type, x, y);
       // show the crit chance notification message
       this.show_notification(ui_text.notifications[type+'_upgrade']);
+      // show upgrade successful message next to mouse click
+      this.render_click_animation(x, y, 'upgrade');
     }
 
     // update live upgrades menu stats in the displayed dom
     this.render_upgrade(type);
   };
 
-  Player.prototype.check_if_able_to_upgrade = function(upgrade_obj) {
+  Player.prototype.check_if_able_to_upgrade = function(upgrade_obj, x, y) {
     /*
     Check the passed in upgrade to see if it passes all conditions for being able to be upgraded:
     - player has enough MiloBucks
     - upgrade is not max level
     - upgrade is active
-    Args: upgrade_obj - reference to which upgrade object to check in the upgrades table (obj)
+    Args: upgrade_obj - reference to which upgrade object to check in the upgrades table (obj), x,y (int) the horizontal/vertical mouse click positions
     return: boolean - if all condition checks were passed and upgrade is allowed
     */
     // boolean var to return that will be set to false if any condition fails
@@ -433,12 +460,15 @@
       able_to_upgrade = false;
       // show max level reached message
       this.show_notification(ui_text.notifications.maxed_out_upgrade);
-
+      // show mex level reached msg next to mouse
+      this.render_click_animation(x,y,'max-level');
     // check if player has enough money to buy upgrade
   } else if (upgrade_obj.cost > this.clicks) {
       able_to_upgrade = false;
-      // show a not enough money message
+      // show a not enough money message in notifications
       this.show_notification(ui_text.notifications.need_more_money);
+      // show not enough money message next to mouse
+      this.render_click_animation(x,y,'no-money');
     }
     return able_to_upgrade;
   };
@@ -511,14 +541,15 @@
     this.render_click_animation('50%', '56%');
   };
 
-  Player.prototype.unlock_next_upgrade = function(current_upgrade) {
+  Player.prototype.unlock_next_upgrade = function(current_upgrade, x, y) {
     /*
     Takes in the current upgrade and unlocks the next upgrade in the
     upgrades table, makes it visible in the dom too.
     Args: current_upgrade (string) - class name of the current upgrade
+          x,y (int) - mouse click position coordinates
     Return: na
     */
-    // check if we even need to unlock the next function first
+    // check if we even need to unlock the next upgrade first
     if (this.upgrades[current_upgrade].level > 1) {
       // exit early
       return;
@@ -542,6 +573,8 @@
       document.getElementsByClassName(next_upgrade)[0].classList.remove(inactive_class);
       // unlock the next upgrade in the sidebar by removing hidden class
       $(".upgrades-tracker li[data-id='"+ next_upgrade +"']").removeClass('inactive');
+      // show an upgrade unlocked notificaiton near click, move away from upgraded message
+      this.render_click_animation(x, y+40, 'upgrade-unlocked');
     }
   };
 
@@ -593,6 +626,8 @@
         this_upgrade.cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'}) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
       // update sidebar label of current upgrade with current level
       sidebar_upgrade_label.textContent = this_upgrade.level;
+      // toggle animation for the text in the label
+      sidebar_upgrade_label.classList.toggle('animate');
     }
 
     // update the displayed description for the current upgrade
@@ -702,6 +737,8 @@
   // append the dom fragment to the actual live dom
   click_layer.appendChild(ui_elements);
 
+  // INTERACTION HANDLING
+
   var current_upgrade;
   // add click listener for the ui
   upgrades.addEventListener('click', function(e) {
@@ -710,7 +747,7 @@
     // make sure a class was received from the click event
     if (current_upgrade) {
       // upgrade the stats for the appropriate upgrade in player
-      player.upgrade(current_upgrade);
+      player.upgrade(current_upgrade, e.x, e.y);
     }
     // stop the page from jumping up if clicking on a blank link
     e.preventDefault();

@@ -144,8 +144,10 @@ main {
       display: block;
       font-size: 0.4em;
       content: 'CRITICAL!'; }
-  .clicked.upgrade {
-    color: #ecc66d; }
+  .clicked.upgrade-unlocked {
+    color: #aa0000; }
+  .clicked.no-money {
+    animation: fade-shake 0.7s 1 ease-in; }
 
 .cat {
   position: relative;
@@ -221,7 +223,10 @@ main {
     background: rgba(0, 0, 0, 0.55);
     width: 100%;
     text-align: center;
-    text-shadow: 1px 1px 5px #fff; }
+    text-shadow: 1px 1px 5px #fff;
+    animation: fade-scale-1 1s 1; }
+    .upgrades-tracker p.animate {
+      animation: fade-scale-2 1s 1; }
   .upgrades-tracker img {
     max-width: 100%; }
   .upgrades-tracker::after {
@@ -292,6 +297,18 @@ main {
   66% {
     transform: scale(1.2) rotate(10deg); } }
 
+@keyframes fade-shake {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1; }
+  20%, 40%, 60% {
+    transform: rotate(-10deg); }
+  30%, 50%, 70% {
+    transform: rotate(10deg); }
+  95%, 100% {
+    transform: rotate(0deg);
+    opacity: 0; } }
+
 @keyframes fade-from-bottom-1 {
   0% {
     opacity: 0;
@@ -300,6 +317,12 @@ main {
     opacity: 1;
     transform: translateY(0) scale(1); } }
 
+@keyframes fade-scale-1 {
+  0%, 100% {
+    transform: scale(1) translateY(-50%); }
+  50% {
+    transform: scale(2) translateY(-10%); } }
+
 @keyframes fade-from-bottom-2 {
   0% {
     opacity: 0;
@@ -307,6 +330,12 @@ main {
   100% {
     opacity: 1;
     transform: translateY(0) scale(1); } }
+
+@keyframes fade-scale-2 {
+  0%, 100% {
+    transform: scale(1) translateY(-50%); }
+  50% {
+    transform: scale(2) translateY(-10%); } }
 
 @keyframes fade-out-to-top {
   0% {
