@@ -183,7 +183,7 @@ main {
     width: 100%;
     color: #e5b13a;
     font-weight: bold;
-    font-size: 6em;
+    font-size: 3em;
     border: 4px double #e5b13a;
     border-width: 4px 0; }
 
@@ -531,6 +531,8 @@ PLUGINS
 @media only screen and (min-width: 35em) {
   .cat {
     max-width: 30em; }
+  .intro h1 {
+    font-size: 7em; }
   .counter {
     font-size: 5em; }
     .counter::before {

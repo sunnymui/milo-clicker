@@ -278,7 +278,7 @@ main {
     width: 100%;
     color: $yellow;
     font-weight: bold;
-    font-size: 6em;
+    font-size: 3em;
     border: 4px double $yellow;
     border-width: 4px 0;
   }
@@ -731,6 +731,10 @@ $preloader-color: $red;
 @media only screen and (min-width: 35em) {
     .cat {
       max-width: 30em;
+    }
+
+    .intro h1 {
+      font-size: 7em;
     }
 
     .counter {
