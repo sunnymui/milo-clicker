@@ -303,7 +303,7 @@
         // initial cost, increase by cost multiplier after each level
         cost: 1,
         // amount to increase cost by after each upgrade level
-        cost_multiplier: 1.4,
+        cost_multiplier: 1.6,
         // level or number of times upgraded
         level: 0,
         // maximum number of upgrades
@@ -317,7 +317,7 @@
         current: 3,
         active: false,
         cost: 1,
-        cost_multiplier: 1.5,
+        cost_multiplier: 1.7,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -328,7 +328,7 @@
         current: 0,
         active: false,
         cost: 5,
-        cost_multiplier: 1.9,
+        cost_multiplier: 2.2,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -339,7 +339,7 @@
         current: 2010,
         active: false,
         cost: 10,
-        cost_multiplier: 2.1,
+        cost_multiplier: 2.3,
         level: 0,
         max_level: 20,
         increase: -100
@@ -350,7 +350,7 @@
         current: 1,
         active: false,
         cost: 50,
-        cost_multiplier: 1.7,
+        cost_multiplier: 2,
         level: 0,
         max_level: 1000,
         increase: 1
