@@ -80,6 +80,9 @@ textarea {
 * {
   box-sizing: border-box; }
 
+body {
+  position: relative; }
+
 .center {
   margin: auto; }
 
@@ -102,6 +105,13 @@ textarea {
   position: absolute;
   top: 50%;
   transform: translateY(-50%); }
+
+.full-screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0; }
 
 main {
   background: url("../img/space.jpg") center center/cover;
@@ -163,6 +173,20 @@ main {
   max-width: 8em;
   animation: size-shift 7s infinite both; }
 
+.intro {
+  background: #000;
+  z-index: 1000;
+  animation: fade-out-scale-in 5s infinite ease-in; }
+  .intro h1 {
+    margin: 0 auto;
+    padding: 10%;
+    width: 100%;
+    color: #e5b13a;
+    font-weight: bold;
+    font-size: 6em;
+    border: 4px double #e5b13a;
+    border-width: 4px 0; }
+
 .counter {
   position: relative;
   font-size: 3.5em;
@@ -206,15 +230,17 @@ main {
     border-radius: 100%;
     display: inline-block;
     overflow: hidden;
-    margin: 0.5em;
+    margin: 0.5em 0.5em 0.1em 0.5em;
     transition: 1s opacity;
     opacity: 1;
     width: 55px;
-    max-width: 15vw; }
+    max-width: 15vw;
+    cursor: pointer; }
     .upgrades-tracker li.inactive {
       opacity: 0;
       width: 0;
       height: 0;
+      pointer-events: none;
       position: absolute; }
   .upgrades-tracker p {
     margin: 0;
@@ -235,15 +261,16 @@ main {
     color: #fff;
     font-size: 0.8em;
     text-align: center;
+    font-style: italic;
     content: 'Current Upgrades'; }
 
 .upgrades {
-  margin: 0 1em 1em 1em;
+  margin: 0 1% 1% 1%;
   padding: 0 1em 1em 1em;
-  width: 94%;
+  width: 98%;
   background: rgba(0, 0, 0, 0.65);
   color: #fff;
-  max-height: 29vh;
+  max-height: 30vh;
   overflow: scroll;
   overflow-x: hidden;
   list-style: none;
@@ -347,6 +374,23 @@ main {
   100% {
     opacity: 0;
     transform: translateY(-110vh) scale(0); } }
+
+@keyframes fade-out-scale-in {
+  0% {
+    opacity: 1;
+    transform: scale(4); }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    background: #000; }
+  75% {
+    opacity: 1;
+    transform: scale(1);
+    background: none; }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    background: none; } }
 
 /* ====================================================================
 PLUGINS

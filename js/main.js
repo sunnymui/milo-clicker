@@ -33,36 +33,37 @@
       {
         title: 'Lucky Cat - Improve Chance of CRITICAL CLICK',
         class: 'crit_chance',
-        description: 'Makes your chance of a CRITICAL CLICK more likely, more CRITICAL CLICKS = more bonus $.',
+        description: 'Makes your chance of getting a CRITICAL CLICK more likely, more CRITICAL CLICKS = more bonus $. Winner winner!',
         unit: '% Chance',
         prefix: '+'
       },{
-        title: 'Jackpot Meow - Increase CRITICAL CLICK Bonus Amount',
+        title: 'Jackpot Meow - Increase CRITICAL CLICK Bonus',
         class: 'crit_multiplier',
-        description: 'Increases the bonus $ amount of a CRITICAL CLICK. Multiplies a CRITICAL CLICK by a higher bonus amount.',
+        description: 'Increases the bonus $ amount of a CRITICAL CLICK. Multiplies a CRITICAL CLICK by a higher bonus amount. Feed that gambling addiction.',
         unit: 'x $ on Critical',
         prefix: '+'
       },{
         title: 'RoboCat - Makes $ Automatically For You',
         class: 'autoclicker',
-        description: 'Have RoboCat automatically earn $ for you. Each level increases the amount RoboCat earns. Utilizes ultra-advanced AI breakthroughs, deep learning neural nets, and tree search algorithms. RoboCat does not trigger CRITICAL CLICKS.',
+        description: 'Have RoboCat automatically earn $ for you. Each level increases the amount RoboCat earns. RoboCat does not trigger CRITICAL CLICKS. Utilizes ultra-advanced AI breakthroughs, deep learning neural nets, and tree search algorithms.',
         unit: '',
         prefix: '+'
       },{
         title: 'RoboCatNip Zoomies - Increase RoboCat Speed',
         class: 'autoclicker_delay',
-        description: 'Makes RoboCat faster, taking less time and earning you $ more quickly.',
+        description: "Makes RoboCat faster, taking less time and earning you $ more quickly. The cyborg feline's drug of choice.",
         unit: ' milliseconds',
         prefix: ''
       },{
-        title: 'Nine Lives - Upgrade Click Multiplier',
+        title: 'MEOWRE TREATS - Upgrade Click Multiplier',
         class: 'click_multiplier',
-        description: 'Increases the amount you get per click. Makes every click earn more $, including CRITICAL CLICKS and RoboCat earnings.',
+        description: 'Increases the amount earned per click. Every click earn more $, including CRITICAL CLICKS and RoboCat earnings. Purrrrrrrrrr...',
         unit: 'x $ per Click',
         prefix: '+'
       }
     ],
-    sidebar_tooltip: 'Upgrade Level:',
+    intro_title: 'STAR MILO',
+    sidebar_tooltip: 'Level:',
     upgrades_title: 'Buy Upgrades',
     notifications: {
       clicked: {
@@ -108,6 +109,25 @@
   //=============================//
 
   var generate_ui = {
+    intro_screen: function () {
+      // create the container for the intro screen overlay
+      var intro_container = document.createElement('div');
+      // create the heading elemnt for the into screen title
+      var intro_title = document.createElement('h1');
+
+      // add layout and intro classes to container
+      intro_container.classList.add('full-screen','intro');
+      // text centering class to the intro title
+      intro_title.classList.add('center-text', 'v-center-absolute');
+
+      // set the text to the title of the game
+      intro_title.innerHTML = ui_text.intro_title;
+
+      // append the title to the intro overlay container
+      intro_container.appendChild(intro_title);
+
+      return intro_container;
+    },
     notification_bar: function() {
       // create element for all the notifications in game
       var notification_bar = document.createElement('h3');
@@ -162,11 +182,7 @@
       // make the label equal to the level of the unclocked skill
       upgrades_sidebar_label.textContent = player.upgrades[type].level;
       // add a title attribute
-      upgrades_sidebar_item.title = upgrade_text[indexes[type]].title +
-                                    ' - ' +
-                                    ui_text.sidebar_tooltip +
-                                    ' ' +
-                                    player.upgrades[type].level;
+      upgrades_sidebar_item.title = this.upgrades_sidebar_item_label(type);
       // append the label to the li
       upgrades_sidebar_item.appendChild(upgrades_sidebar_label);
       // append the img to the li
@@ -175,6 +191,20 @@
       upgrades_sidebar_label.classList.add('v-center-absolute');
 
       return upgrades_sidebar_item;
+    },
+    upgrades_sidebar_item_label: function(type) {
+      // generates the formatted text for the sidebar item toolltip
+      // cost formatted as a price
+      return player.upgrades[type].cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'}) +
+      ' - ' +
+      // the title of this upgrade in the ui text
+      ui_text.upgrades[ui_text.upgrade_indexes[type]].title +
+      ' - ' +
+      // just label text for the level
+      ui_text.sidebar_tooltip +
+      ' ' +
+      // upgrade level
+      player.upgrades[type].level;
     },
     counter: function () {
       // create element for click amount counter
@@ -610,8 +640,10 @@
     var element_title = document.querySelector(upgrade_class + ' h3');
     // the paragraph elemene tfor the current upgrade
     var element_desc = document.querySelector(upgrade_class + ' p');
-    // get the upgrade element in the sidebar
-    var sidebar_upgrade_label = document.querySelector('li[data-id='+ type +'] p');
+    // get sidebar list item
+    var sidebar_upgrade = document.querySelector('li[data-id='+ type + ']');
+    // get the upgrade label element in the sidebar
+    var sidebar_upgrade_label = sidebar_upgrade.querySelector('p');
 
     // render different format if can't be upgraded since at max level
     if (this_upgrade.level === this_upgrade.max_level) {
@@ -624,6 +656,8 @@
       // update the displayed title with current level and cost info
       element_title.innerHTML =
         this_upgrade.cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'}) + ' - ' + this_text.title + ' - Lvl ' + this_upgrade.level;
+      // update the sidebar title attribute with the updated price
+      sidebar_upgrade.title = generate_ui.upgrades_sidebar_item_label(type);
       // update sidebar label of current upgrade with current level
       sidebar_upgrade_label.textContent = this_upgrade.level;
       // toggle animation for the text in the label
@@ -680,7 +714,7 @@
   ===========================================================
   */
 
-  // LOADING ANIMATION
+  // PRELOADING ANIMATION
 
   // listen for dom content loaded before revealing everything
   window.onload = function(){
@@ -694,7 +728,10 @@
     main.classList.remove('visuallyhidden');
   };
 
-  // INITIAL SETUP
+  // INITIAL GAME SETUP
+
+  // instantiate a player object for the game
+  var player = new Player();
 
   // Map each ui text upgrade name to its index for use in player upgrade rendering function
   ui_text.upgrade_indexes = ui_text.upgrades.reduce(function(indexes_map, current_obj_in_array, i){
@@ -704,14 +741,13 @@
     return indexes_map;
   }, {});
 
-  // instantiate a player object for the game
-  var player = new Player();
-
   // GAME ELEMENT CREATION
 
   // dom fragment to store all the ui stuff, reduce number of append operations
   var ui_elements = document.createDocumentFragment();
 
+  // create the intro screen overlay element
+  var intro = generate_ui.intro_screen();
   // create element for all the notifications in game
   var notification_bar = generate_ui.notification_bar();
   // create an upgrades/lvls tracker sidebar element
@@ -737,10 +773,40 @@
   // append the dom fragment to the actual live dom
   click_layer.appendChild(ui_elements);
 
+  // prepend the intro overlay to the body as the final thing
+  $(document.body).prepend(intro);
+  // hide the intro overlay after the animation finishes
+  setTimeout(function(){
+    intro.classList.add('hidden');
+  }, 5000);
+
   // INTERACTION HANDLING
 
   var current_upgrade;
-  // add click listener for the ui
+  // add click listener for the upgrades shortcut sidebar ui
+  upgrades_sidebar.addEventListener('click', function(e) {
+    // get the name of the upgrade that was clicked
+    current_upgrade = $(e.target).closest('li').attr('data-id');
+    // make sure a class was received from the click event
+    if (current_upgrade) {
+      // upgrade the stats for the appropriate upgrade in player
+      player.upgrade(current_upgrade, e.x, e.y);
+    }
+    // stop the page from jumping up if clicking on a blank link
+    e.preventDefault();
+  });
+
+  // add click listener for clicking the cat
+  milo.addEventListener('click', function(e) {
+    // roll for chance of a critical click
+    player.roll_for_click();
+    // display player clicks amount in click counter
+    player.render_clicks();
+    // render the click increment animation at mouse click location
+    player.render_click_animation(e.pageX, e.pageY);
+  });
+
+  // add click listener for the upgrade menu ui
   upgrades.addEventListener('click', function(e) {
     // get the class of the li item that was clicked
     current_upgrade = $(e.target).closest('li').attr('class');
@@ -752,16 +818,5 @@
     // stop the page from jumping up if clicking on a blank link
     e.preventDefault();
   });
-
-  // add click listener for the clickable image layer
-  milo.addEventListener('click', function(e) {
-    // roll for chance of a critical click
-    player.roll_for_click();
-    // display player clicks amount in click counter
-    player.render_clicks();
-    // render the click increment animation at mouse click location
-    player.render_click_animation(e.pageX, e.pageY);
-  });
-
 
 }());

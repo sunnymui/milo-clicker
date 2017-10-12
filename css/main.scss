@@ -100,6 +100,7 @@ textarea {
 $black: rgba(#000000, 0.65);
 $white: rgba(#ffffff, 0.65);
 $gold: #ecc66d;
+$yellow: #e5b13a;
 $red: #aa0000;
 
 // other vars
@@ -115,11 +116,18 @@ $counter-label: 'MiloBucks';
   }
 }
 
+// General
+
 * {
   box-sizing: border-box;
 }
 
-// Layout
+body {
+  // make absolute be relative to the body instead of viewport
+  position: relative;
+}
+
+// Layout & General Design
 
 .center {
   margin: auto;
@@ -148,6 +156,14 @@ $counter-label: 'MiloBucks';
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.full-screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 
 // Background
@@ -196,6 +212,7 @@ main {
   position: relative;
 }
 
+// the immediate next-to-mouse notifications
 .clicked {
   position: absolute;
   // so after animation runs it stays hidden
@@ -250,6 +267,22 @@ main {
 }
 
 // UI Elements
+
+.intro {
+  background: #000;
+  z-index: 1000;
+  animation: fade-out-scale-in 5s infinite ease-in;
+
+  h1 {
+    @include margin-padding(0 auto, 10%);
+    width: 100%;
+    color: $yellow;
+    font-weight: bold;
+    font-size: 6em;
+    border: 4px double $yellow;
+    border-width: 4px 0;
+  }
+}
 
 .counter {
   // so the pseudo element is positioned within the counter
@@ -309,16 +342,19 @@ main {
       // so everything next to each other and text align center will center
       display: inline-block;
       overflow: hidden;
-      margin: 0.5em;
+      margin: 0.5em 0.5em 0.1em 0.5em;
+      // so it fades in
       transition: 1s opacity;
       opacity: 1;
       width: 55px;
       max-width: 15vw;
+      cursor: pointer;
 
       &.inactive {
         opacity: 0;
         width: 0;
         height: 0;
+        pointer-events: none;
         position: absolute;
       }
     }
@@ -349,17 +385,18 @@ main {
       color: #fff;
       font-size: 0.8em;
       text-align: center;
+      font-style: italic;
       content: 'Current Upgrades';
     }
 }
 
 .upgrades {
-  @include margin-padding(0 1em 1em 1em,0 1em 1em 1em);
-  width: 94%;
+  @include margin-padding(0 1% 1% 1%,0 1em 1em 1em);
+  width: 98%;
   background: $black;
   color: #fff;
   // so it doesn't take up the whole screen
-  max-height: 29vh;
+  max-height: 30vh;
   // but user can still scrol through to view all the options
   overflow: scroll;
   // hide horizontal scroll bar
@@ -496,7 +533,7 @@ main {
   }
 }
 
-@keyframes fade-out-to-top{
+@keyframes fade-out-to-top {
   0% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -508,6 +545,28 @@ main {
   100% {
     opacity: 0;
     transform: translateY(-110vh) scale(0);
+  }
+}
+
+@keyframes fade-out-scale-in {
+  0% {
+    opacity: 1;
+    transform: scale(4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    background: #000;
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1);
+    background: none;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    background: none;
   }
 }
 
