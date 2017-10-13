@@ -21,7 +21,8 @@
     autoclicker_src: 'img/Scatter.png',
     autoclicker_delay_src: 'img/Wind%20Haste.png',
     click_multiplier_src: 'img/Thunder.png',
-    roomba_cat_src: 'img/roombacat.png'
+    roomba_cat_src: 'img/roombacat.png',
+    logo: 'img/star-milo.png'
   };
   // text content
   var ui_text = {
@@ -62,6 +63,7 @@
         prefix: '+'
       }
     ],
+    intro_text: 'A long time ago in a galaxy far, far away...',
     intro_title: 'STAR MILO',
     sidebar_tooltip: 'Level:',
     upgrades_title: 'Buy Upgrades',
@@ -109,24 +111,37 @@
   //=============================//
 
   var generate_ui = {
+
     intro_screen: function () {
       // create the container for the intro screen overlay
       var intro_container = document.createElement('div');
-      // create the heading elemnt for the into screen title
-      var intro_title = document.createElement('h1');
+      // create the pre intro text element
+      var intro_text = document.createElement('h2');
+
+      // add centering classes to the intro text
+      intro_text.classList.add('center', 'v-center-absolute');
+      // set it to a long time ago etc...
+      intro_text.textContent = ui_text.intro_text;
+
+      // append the text to the intro container
+      intro_container.appendChild(intro_text);
 
       // add layout and intro classes to container
-      intro_container.classList.add('full-screen','intro');
-      // text centering class to the intro title
-      intro_title.classList.add('center-text', 'v-center-absolute');
-
-      // set the text to the title of the game
-      intro_title.innerHTML = ui_text.intro_title;
-
-      // append the title to the intro overlay container
-      intro_container.appendChild(intro_title);
+      intro_container.classList.add('full-screen','intro', 'v-center-children');
 
       return intro_container;
+    },
+    intro_title: function() {
+      // create the heading elemnt for the into screen title
+      var intro_title = document.createElement('img');
+      // text centering class to the intro title
+      intro_title.classList.add('center', 'animate');
+      // set the text to the title of the game
+      intro_title.src = assets.logo;
+      // set the alt tag for screen readers
+      intro_title.alt = ui_text.intro_title;
+
+      return intro_title;
     },
     notification_bar: function() {
       // create element for all the notifications in game
@@ -748,6 +763,8 @@
 
   // create the intro screen overlay element
   var intro = generate_ui.intro_screen();
+  //create the intro title
+  var intro_title = generate_ui.intro_title();
   // create element for all the notifications in game
   var notification_bar = generate_ui.notification_bar();
   // create an upgrades/lvls tracker sidebar element
@@ -773,12 +790,32 @@
   // append the dom fragment to the actual live dom
   click_layer.appendChild(ui_elements);
 
+  // INTRO ANIMATION
+
   // prepend the intro overlay to the body as the final thing
   $(document.body).prepend(intro);
-  // hide the intro overlay after the animation finishes
+
   setTimeout(function(){
+    // hide the intro text so you can see the logo screen next
+    document.querySelector('.intro h2').classList.add('transparent');
+  }, 3000);
+
+  setTimeout(function(){
+    // add the logo title element so the css animation plays
+    intro.appendChild(intro_title);
+  }, 4000);
+
+  setTimeout(function(){
+    // hide the title logo after the animation is done
+    document.querySelector('.intro img').classList.add('hidden');
+    // fade out animation for the intro overlay
+    intro.classList.add('animate');
+  }, 9000);
+
+  setTimeout(function(){
+    // hide the intro overlay after the animation finishes
     intro.classList.add('hidden');
-  }, 5000);
+  }, 12000);
 
   // INTERACTION HANDLING
 

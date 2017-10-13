@@ -102,6 +102,7 @@ $white: rgba(#ffffff, 0.65);
 $gold: #ecc66d;
 $yellow: #e5b13a;
 $red: #aa0000;
+$blue: #4bd5ee;
 
 // other vars
 
@@ -120,11 +121,6 @@ $counter-label: 'MiloBucks';
 
 * {
   box-sizing: border-box;
-}
-
-body {
-  // make absolute be relative to the body instead of viewport
-  position: relative;
 }
 
 // Layout & General Design
@@ -164,6 +160,10 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
+}
+
+.transparent {
+  opacity: 0;
 }
 
 // Background
@@ -269,18 +269,35 @@ main {
 // UI Elements
 
 .intro {
-  background: #000;
+  position: fixed;
+  background-color: #000;
+  background: url('../img/stars.jpg') repeat center;
   z-index: 1000;
-  animation: fade-out-scale-in 5s infinite ease-in;
 
-  h1 {
-    @include margin-padding(0 auto, 10%);
+  &.animate {
+  animation: fade-out 3s infinite ease-in;
+  }
+
+  h2 {
+    // the black background will cover the starfield initially
+    @include margin-padding(0 auto, 50% 10%);
+    background-color: #000;
     width: 100%;
-    color: $yellow;
-    font-weight: bold;
+    color: $blue;
     font-size: 3em;
-    border: 4px double $yellow;
-    border-width: 4px 0;
+    transition: opacity 1s;
+  }
+
+  img {
+    // so margin auto can center
+    left: 0;
+    right: 0;
+    max-height: 18em;
+
+    &.animate {
+      animation: scale-in 5s infinite ease-in;
+    }
+
   }
 }
 
@@ -567,6 +584,31 @@ main {
     opacity: 0;
     transform: scale(0);
     background: none;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    background-size: 100%;
+    background-position: center;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-size: 400%;
+    background-position: 20% 400%;
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    // translate specified to keep the vertical centering
+    transform: scale(4);
+  }
+  100% {
+    transform: scale(0);
   }
 }
 
