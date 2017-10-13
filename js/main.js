@@ -111,6 +111,13 @@
   //=============================//
 
   var generate_ui = {
+    /*
+    Several functions of the same general structure that
+    all generate various parts of the game ui, without
+    yet appending them to the actual dom.
+    Args: na
+    Returns: the element ready for appending to the dom
+    */
 
     intro_screen: function () {
       // create the container for the intro screen overlay
@@ -343,7 +350,7 @@
         current: 0,
         active: false,
         cost: 5,
-        cost_multiplier: 2.2,
+        cost_multiplier: 2.3,
         level: 0,
         max_level: 1000,
         increase: 1
@@ -354,7 +361,7 @@
         current: 2010,
         active: false,
         cost: 10,
-        cost_multiplier: 2.3,
+        cost_multiplier: 2.4,
         level: 0,
         max_level: 20,
         increase: -100
@@ -365,7 +372,7 @@
         current: 1,
         active: false,
         cost: 50,
-        cost_multiplier: 2,
+        cost_multiplier: 2.1,
         level: 0,
         max_level: 1000,
         increase: 1
