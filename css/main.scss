@@ -269,6 +269,7 @@ main {
 // UI Elements
 
 .intro {
+  // so viewer cant scroll out of the intro screen
   position: fixed;
   background-color: #000;
   background: url('../img/stars.jpg') repeat center;
@@ -304,6 +305,8 @@ main {
 .counter {
   // so the pseudo element is positioned within the counter
   position: relative;
+  // stay above the cat layer
+  z-index: 100;
   font-size: 3.5em;
   margin: 0.5em auto;
   color: #fff;

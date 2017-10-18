@@ -1,0 +1,890 @@
+/*! HTML5 Boilerplate v5.3.0 | MIT License | https://html5boilerplate.com/ */
+
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Browser Upgrade Prompt
+   ========================================================================== */
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+// color vars
+
+$black: rgba(#000000, 0.65);
+$white: rgba(#ffffff, 0.65);
+$gold: #ecc66d;
+$yellow: #e5b13a;
+$red: #aa0000;
+$blue: #4bd5ee;
+
+// other vars
+
+$counter-label: 'MiloBucks';
+
+// mixins
+
+@mixin margin-padding($margin, $padding: 0) {
+  margin: $margin;
+  @if $padding {
+    padding: $padding;
+  }
+}
+
+// General
+
+* {
+  box-sizing: border-box;
+}
+
+// Layout & General Design
+
+.center {
+  margin: auto;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.padding-1 {
+  padding: 1em;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.v-center-children {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.v-center-absolute {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.full-screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.transparent {
+  opacity: 0;
+}
+
+// Background
+
+main {
+  background: url('../img/space.jpg') center center/cover;
+  // stretch the background to at least the height of the viewport
+  min-height: 100vh;
+  opacity: 1;
+  transition: 1s opacity;
+  width: 100%;
+}
+
+// Custom Scroll Bars
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-image: -webkit-gradient(linear,
+									   left bottom,
+									   left top,
+									   color-stop(0.44, rgb(116, 127, 148)),
+									   color-stop(0.72, rgb(58, 87, 121)),
+									   color-stop(0.86, rgb(25, 36, 70)));
+}
+
+// Clickable Layer
+
+.clickable {
+  // make it at least viewport width, but allow elements to stretch it further
+  // so user can scroll if needed to view menu
+  min-height: 100vh;
+  position: relative;
+}
+
+// the immediate next-to-mouse notifications
+.clicked {
+  position: absolute;
+  // so after animation runs it stays hidden
+  opacity: 0;
+  // so it stays on top of everything
+  z-index: 100;
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  // so clicks fall through into the clickable layer instead
+  pointer-events: none;
+  animation: fade-out-to-top 0.7s 1 ease-in;
+
+  &.critical {
+    color: $red;
+    font-size: 3em;
+
+    &::after {
+      display: block;
+      font-size: 0.4em;
+      content: 'CRITICAL!';
+    }
+  }
+
+  &.upgrade-unlocked {
+    color: $red;
+  }
+
+  &.no-money {
+    animation: fade-shake 0.7s 1 ease-in;
+  }
+}
+
+.cat {
+  // on top of any absolutely position elements
+  position: relative;
+  // put it on top of everything
+  z-index: 10;
+  max-width: 20em;
+  cursor: pointer;
+  // makes cat move around like floating in space
+  animation: shake 60s infinite cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.robot {
+  position: absolute;
+  bottom: 33vh;
+  z-index: 0;
+  max-width: 8em;
+  animation: size-shift 7s infinite both;
+}
+
+// UI Elements
+
+.intro {
+  position: fixed;
+  background-color: #000;
+  background: url('../img/stars.jpg') repeat center;
+  z-index: 1000;
+
+  &.animate {
+  animation: fade-out 3s infinite ease-in;
+  }
+
+  h2 {
+    // the black background will cover the starfield initially
+    @include margin-padding(0 auto, 50% 10%);
+    background-color: #000;
+    width: 100%;
+    color: $blue;
+    font-size: 3em;
+    transition: opacity 1s;
+  }
+
+  img {
+    // so margin auto can center
+    left: 0;
+    right: 0;
+    max-height: 18em;
+
+    &.animate {
+      animation: scale-in 5s infinite ease-in;
+    }
+
+  }
+}
+
+.counter {
+  // so the pseudo element is positioned within the counter
+  position: relative;
+  font-size: 3.5em;
+  margin: 0.5em auto;
+  color: #fff;
+  text-shadow: 0 0 10px #000;
+}
+
+// create a label for the counter
+.counter::before {
+  @include margin-padding(auto, 0.3em 0);
+  // effectively 1em since em sets size relative to parent element
+  font-size: 0.2em;
+  display: block;
+  font-weight: 100;
+  width: 6em;
+  background: #000;
+  opacity: 0.6;
+  border: 1px solid #fff;
+  content: $counter-label;
+}
+
+.notifications {
+  @include margin-padding(0,0.5em);
+  width: 100%;
+  background: $black;
+  border-bottom: 1px solid #fff;
+  color: #fff;
+  font-weight: 100;
+  // same animation with different names used to restart css animation
+  // when toggling animate class off and on
+  animation: fade-from-bottom-1 0.3s 1;
+
+  &.animate {
+    animation: fade-from-bottom-2 0.3s 1;
+  }
+
+  &.red {
+    color: $red;
+  }
+
+}
+
+.upgrades-tracker {
+    @include margin-padding(0 auto,0);
+    // the width of the upgrade pics
+    text-align: center;
+    list-style: none;
+
+    li {
+      // to keep children positioned within the list item
+      position: relative;
+      // circles for the pics
+      border-radius: 100%;
+      // so everything next to each other and text align center will center
+      display: inline-block;
+      overflow: hidden;
+      margin: 0.5em 0.5em 0.1em 0.5em;
+      // so it fades in
+      transition: 1s opacity;
+      opacity: 1;
+      width: 55px;
+      max-width: 15vw;
+      cursor: pointer;
+
+      &.inactive {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+        position: absolute;
+      }
+    }
+
+    p {
+      @include margin-padding(0,0.3em);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.55);
+      // so it gets centered and bg is length of bg img
+      width: 100%;
+      text-align: center;
+      text-shadow: 1px 1px 5px #fff;
+      animation: fade-scale-1 1s 1;
+
+      &.animate {
+        animation: fade-scale-2 1s 1;
+      }
+    }
+
+    img {
+      // stretch proportionately by width
+      max-width: 100%;
+    }
+
+    &::after {
+      display: block;
+      margin: 0 auto;
+      color: #fff;
+      font-size: 0.8em;
+      text-align: center;
+      font-style: italic;
+      content: 'Current Upgrades';
+    }
+}
+
+.upgrades {
+  @include margin-padding(0 1% 1% 1%,0 1em 1em 1em);
+  width: 98%;
+  background: $black;
+  color: #fff;
+  // so it doesn't take up the whole screen
+  max-height: 30vh;
+  // but user can still scrol through to view all the options
+  overflow: scroll;
+  // hide horizontal scroll bar
+  overflow-x: hidden;
+  list-style: none;
+  border: 4px double #fff;
+  border-radius: 5px;
+
+  a {
+    color: $gold;
+    text-decoration: none;
+  }
+
+  img {
+    float: left;
+    margin-right: 1em;
+    border: 1px solid $gold;
+    border-radius: 5px;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  h3 {
+    @include margin-padding(0);
+    text-decoration: underline;
+  }
+
+  p {
+    margin: 0.5em 0.5em 1.5em;
+  }
+
+  li {
+    animation: fade-from-bottom-1 1s 1;
+    width: 100%;
+
+    &.upgrades-header {
+      display: block;
+      width: 100%;
+      border-bottom: 1px solid #fff;
+      margin: 0.5em 0 0.8em 0;
+      padding-bottom: 0.5em;
+    }
+
+    &.inactive {
+      display: none;
+    }
+  }
+
+  li:hover {
+    opacity: 0.7;
+  }
+
+}
+
+// CSS Animations
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(3em, 3em, 0) rotate(15deg);
+  }
+
+  20%, 80% {
+    transform: translate3d(2em, -4em, 0) rotate(13deg);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-3em, -2em, 0) rotate(-12deg);
+  }
+
+  40%, 60% {
+    transform: translate3d(4em, -6em, 0) rotate(-17deg);
+  }
+}
+
+@keyframes size-shift {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  33% {
+    transform: scale(1.2) rotate(-10deg);
+  }
+
+  66% {
+    transform: scale(1.2) rotate(10deg);
+  }
+
+}
+
+@keyframes fade-shake {
+  0%{
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  20%, 40%, 60% {
+    transform: rotate(-10deg);
+  }
+
+  30%, 50%, 70% {
+    transform: rotate(10deg);
+  }
+
+  95%, 100%{
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+
+}
+
+@for $i from 1 through 2 {
+  @keyframes fade-from-bottom-#{$i} {
+    0% {
+      opacity: 0;
+      transform: translateY(30%) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes fade-scale-#{$i} {
+    0%, 100% {
+      // start at a -50% translate because it fixes the jerk at the end
+      transform: scale(1) translateY(-50%);
+    }
+
+    50% {
+      transform: scale(2) translateY(-10%);
+    }
+  }
+}
+
+@keyframes fade-out-to-top {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  90% {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) scale(0);
+  }
+}
+
+@keyframes fade-out-scale-in {
+  0% {
+    opacity: 1;
+    transform: scale(4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    background: #000;
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1);
+    background: none;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    background: none;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    background-size: 100%;
+    background-position: center;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-size: 400%;
+    background-position: 20% 400%;
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    // translate specified to keep the vertical centering
+    transform: scale(4);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+
+/* ====================================================================
+PLUGINS
+===================================================================== */
+
+$preloader-bg: #fff;
+$preloader-color: $red;
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+}
+.loader {
+  color: $preloader-color;
+  font-size: 11px;
+  text-indent: -99999em;
+  margin: 55px auto;
+  position: relative;
+  width: 10em;
+  height: 10em;
+  box-shadow: inset 0 0 0 1em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.loader:before,
+.loader:after {
+  position: absolute;
+  content: '';
+}
+.loader:before {
+  width: 5.2em;
+  height: 10.2em;
+  background: $preloader-bg;
+  border-radius: 10.2em 0 0 10.2em;
+  top: -0.1em;
+  left: -0.1em;
+  -webkit-transform-origin: 5.2em 5.1em;
+  transform-origin: 5.2em 5.1em;
+  -webkit-animation: load2 2s infinite ease 1.5s;
+  animation: load2 2s infinite ease 1.5s;
+}
+.loader:after {
+  width: 5.2em;
+  height: 10.2em;
+  background: $preloader-bg;
+  border-radius: 0 10.2em 10.2em 0;
+  top: -0.1em;
+  left: 5.1em;
+  -webkit-transform-origin: 0px 5.1em;
+  transform-origin: 0px 5.1em;
+  -webkit-animation: load2 2s infinite ease;
+  animation: load2 2s infinite ease;
+}
+@-webkit-keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers
+ */
+
+.hidden {
+    display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ */
+
+.visuallyhidden {
+    opacity: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+// desktop size screen
+@media only screen and (min-width: 35em) {
+    .cat {
+      max-width: 30em;
+    }
+
+    .intro h1 {
+      font-size: 7em;
+    }
+
+    .counter {
+      font-size: 5em;
+
+      &::before {
+        // position it to the top left corner
+        position: absolute;
+        left: -3em;
+        top: -1.3em;
+        transform: rotate(-16deg);
+        // hack to fix the antialiasing
+        -webkit-backface-visibility: hidden;
+      }
+    }
+
+    .upgrades {
+      li {
+        display: inline-block;
+        vertical-align: top;
+        width: 49%;
+        margin-right: 1%;
+      }
+    }
+}
+
+@media print,
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 1.25dppx),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid the additional HTTP request:
+   http://www.phpied.com/delay-loading-your-print-css/
+   ========================================================================== */
+
+@media print {
+    *,
+    *:before,
+    *:after,
+    *:first-letter,
+    *:first-line {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster:
+                                   http://www.sanbeiji.com/archives/953 */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links that are fragment identifiers,
+     * or use the `javascript:` pseudo protocol
+     */
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    /*
+     * Printing Tables:
+     * http://css-discuss.incutio.com/wiki/Printing_Tables
+     */
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
