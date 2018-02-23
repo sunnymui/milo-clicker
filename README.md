@@ -13,6 +13,10 @@ Play right now by clicking on the following link:
 
 Or you can just copy that link directly into your browser's address bar.
 
+The goal of the game is to get as many MiloBucks (TM) as possible. You get MiloBucks by clicking on Milo the Cat who's just floating along in space. After a short intro animation, you'll reach the main game screen. Start clicking on Milo to make MiloBucks, then spend those MiloBucks on upgrades. Different upgrades increase your ability to make MiloBucks in different ways. You'll have to buy each upgrade in order to unlock the ability to buy other upgrades. Keep upgrading, clicking Milo, and making MiloBucks until your computer explodes or you get bored of the game (impossible).
+
+### Developers
+
 Alternatively, you can clone the repository to your computer using Github's Clone or Download button. Or navigate to the directory you want to download the repository into using your preferred Git command line utlity and enter the following (make sure you're connected to the internet):
 
 `git clone https://github.com/sunnymui/milo-clicker.git`
