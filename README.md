@@ -57,14 +57,14 @@ Upgrade tile images are sourced from here: [Super Game Asset](http://www.superga
 
 ## Build Tools
 
-This project uses Grunt as final build tool for development:
+This project uses Grunt as final build tool for development. The grunt plugins used are:
 
-  1. imagemin - compresses images
-    a. imagemin-mozjpeg - specialized jpg compression plugin for imagemin
-  2. responsive images - create multiple size images for responsive use
-  3. uglify - minify and concatenate js
-  4. cssmin - minify and concatenate css
-  5. watch - watch files for changes and run relevant tasks
+1. imagemin - compresses images
+2. imagemin-mozjpeg - specialized jpg compression plugin for imagemin
+2. responsive images - create multiple size images for responsive use
+3. uglify - minify and concatenate js
+4. cssmin - minify and concatenate css
+5. watch - watch files for changes and run relevant tasks
   
 To rebuild the project after making changes to the code, you'll need to have NPM, Grunt, and the mentioned plugins installed. Details in gruntfile.js.
 
